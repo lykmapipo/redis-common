@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - '12.4.0'
+services: 
+  - redis-server
+before_script:
+  - redis-cli config set notify-keyspace-events KEA
+script:
+  - commitlint-travis
+  - npm test
