@@ -1,4 +1,4 @@
-import { forEach, isEmpty } from 'lodash';
+import { forEach, isEmpty, isFunction, isString } from 'lodash';
 import { compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
@@ -218,6 +218,36 @@ export const key = (...args) => {
 
   // return storage key
   return storageKey;
+};
+
+/**
+ * @function keys
+ * @name keys
+ * @description Find all keys matching given pattern
+ * @param {String} pattern valid key pattern
+ * @param {Function} done callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * keys('users', (error, keys) => { ... });
+ *
+ */
+export const keys = (pattern, done) => {
+  // normalize arguments
+  const cb = isFunction(pattern) ? pattern : done;
+  let keyPattern = isString(pattern) ? pattern : '';
+
+  // obtain key
+  keyPattern = [key(pattern), '*'].join('');
+
+  // fetch keys
+  const redisClient = createClient();
+  return redisClient.keys(keyPattern, cb);
 };
 
 /**

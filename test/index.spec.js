@@ -6,6 +6,7 @@ import {
   createClients,
   createMulti,
   key,
+  keys,
   quit,
 } from '../src/index';
 
@@ -108,6 +109,15 @@ describe('redis-common', () => {
     expect(key('users', 'likes', 'vegetables')).to.be.equal(
       'r:users:likes:vegetables'
     );
+  });
+
+  it('should be able to get keys', done => {
+    expect(keys).to.exist.and.be.a('function');
+
+    keys((error, foundKeys) => {
+      expect(error).to.not.exist;
+      done(error, foundKeys);
+    });
   });
 
   it('should quit all redis clients', () => {
