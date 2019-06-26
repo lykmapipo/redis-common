@@ -4,6 +4,7 @@ import {
   createClient,
   createPubSub,
   createClients,
+  key,
   quit,
 } from '../src/index';
 
@@ -15,6 +16,7 @@ describe('redis-common', () => {
     expect(options).to.exist.and.be.an('object');
     expect(options.url).to.exist.and.be.equal('redis://127.0.0.1:6379');
     expect(options.prefix).to.exist.and.be.equal('r');
+    expect(options.separator).to.exist.and.be.equal(':');
   });
 
   it('should create redis client', () => {
@@ -87,6 +89,15 @@ describe('redis-common', () => {
     expect(subscriber.prefix).to.exist.and.be.equal('r');
 
     expect(publisher.uuid).to.not.be.equal(subscriber.uuid);
+  });
+
+  it('should create redis key', () => {
+    expect(key()).to.exist;
+    expect(key('ab')).to.be.equal('r:ab');
+    expect(key(['users', 'ab'])).to.be.equal('r:users:ab');
+    expect(key('users', 'likes', 'vegetables')).to.be.equal(
+      'r:users:likes:vegetables'
+    );
   });
 
   it('should quit all redis clients', () => {

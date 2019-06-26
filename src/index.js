@@ -1,4 +1,4 @@
-import { forEach } from 'lodash';
+import { forEach, isEmpty } from 'lodash';
 import { compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
@@ -34,6 +34,7 @@ export const withDefaults = optns => {
   const defaults = {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
+    separator: getString('REDIS_KEY_SEPARATOR', ':'),
   };
 
   // merge and compact with defaults
@@ -154,6 +155,41 @@ export const createPubSub = optns => {
 export const createClients = optns => {
   // create and return clients
   return { client: createClient(optns), ...createPubSub(optns) };
+};
+
+/**
+ * @function key
+ * @name key
+ * @description Generate data storage key
+ * @param {...String|String} args valid key parts
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * key('users');
+ * // => 'r:users';
+ *
+ * key('users', 'likes');
+ * // => 'r:users:likes'
+ *
+ */
+export const key = (...args) => {
+  // obtain options
+  const { prefix, separator } = withDefaults();
+
+  // collect key parts
+  let parts = compact([].concat(...args));
+  parts = !isEmpty(parts) ? parts : [uuidv1()];
+
+  // prepare key
+  const storageKey = compact([prefix, ...parts]).join(separator);
+
+  // return storage key
+  return storageKey;
 };
 
 /**
