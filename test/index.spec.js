@@ -51,4 +51,15 @@ describe('redis-common', () => {
 
     expect(publisher.uuid).to.not.be.equal(subscriber.uuid);
   });
+
+  it('should not re-create pubsub redis clients', () => {
+    const { publisher: a, subscriber: b } = createPubSub();
+    const { publisher: c, subscriber: d } = createPubSub();
+
+    expect(a.uuid).to.be.equal(c.uuid);
+    expect(a.prefix).to.be.equal(c.prefix);
+
+    expect(b.uuid).to.be.equal(d.uuid);
+    expect(b.prefix).to.be.equal(d.prefix);
+  });
 });
