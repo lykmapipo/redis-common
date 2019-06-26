@@ -4,7 +4,7 @@ import { getString } from '@lykmapipo/env';
 /**
  * @function withDefaults
  * @name withDefaults
- * @description merge provided options with defaults.
+ * @description Merge provided options with defaults.
  * @param {Object} [optns] provided options
  * @return {Object} merged options
  * @author lally elias <lallyelias87@gmail.com>
@@ -15,7 +15,7 @@ import { getString } from '@lykmapipo/env';
  * @public
  * @example
  *
- * const { withDefaults } = require('@lykmapipo/keu-common');
+ * const { withDefaults } = require('@lykmapipo/redis-common');
  * const redis = (process.env.REDIS_URL || { port: 6379, host: '127.0.0.1' });
  * const options = withDefaults({ redis })
  *
@@ -25,7 +25,8 @@ import { getString } from '@lykmapipo/env';
 export const withDefaults = optns => {
   // defaults
   const defaults = {
-    redis: getString('REDIS_URL') || { port: 6379, host: '127.0.0.1' },
+    url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
+    prefix: getString('REDIS_KEY_PREFIX', 'r'),
   };
 
   // merge and compact with defaults
