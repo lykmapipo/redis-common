@@ -1,5 +1,10 @@
 import { expect } from '@lykmapipo/test-helpers';
-import { withDefaults, createClient, createPubSub } from '../src/index';
+import {
+  withDefaults,
+  createClient,
+  createPubSub,
+  createClients,
+} from '../src/index';
 
 describe('redis-common', () => {
   it('should provide default options', () => {
@@ -61,5 +66,25 @@ describe('redis-common', () => {
 
     expect(b.uuid).to.be.equal(d.uuid);
     expect(b.prefix).to.be.equal(d.prefix);
+  });
+
+  it('should create redis clients', () => {
+    expect(createClients).to.exist.and.be.a('function');
+
+    const { client, publisher, subscriber } = createClients();
+
+    expect(client).to.exist;
+    expect(client.uuid).to.exist;
+    expect(client.prefix).to.exist.and.be.equal('r');
+
+    expect(publisher).to.exist;
+    expect(publisher.uuid).to.exist;
+    expect(publisher.prefix).to.exist.and.be.equal('r');
+
+    expect(subscriber).to.exist;
+    expect(subscriber.uuid).to.exist;
+    expect(subscriber.prefix).to.exist.and.be.equal('r');
+
+    expect(publisher.uuid).to.not.be.equal(subscriber.uuid);
   });
 });

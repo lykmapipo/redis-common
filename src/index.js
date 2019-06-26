@@ -151,4 +151,7 @@ export const createPubSub = optns => {
  * const { client, publisher, subscriber } = createClients({ new: true });
  *
  */
-export const createClients = () => {};
+export const createClients = optns => {
+  // create and return clients
+  return { client: createClient(optns), ...createPubSub(optns) };
+};
