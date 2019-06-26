@@ -19,4 +19,13 @@ describe('redis-common', () => {
     expect(client.id).to.exist;
     expect(client.prefix).to.exist.and.be.equal('r');
   });
+
+  it('should create redis client with give options', () => {
+    expect(createClient).to.exist.and.be.a('function');
+
+    const client = createClient({ prefix: 're', recreate: true });
+    expect(client).to.exist;
+    expect(client.id).to.exist;
+    expect(client.prefix).to.exist.and.be.equal('re');
+  });
 });
