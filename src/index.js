@@ -249,8 +249,10 @@ export const keys = (pattern, done) => {
   keyPattern = compact([prefix, ...keyPattern.split(separator)]).join(':');
   keyPattern = [...keyPattern, '*'].join('');
 
-  // fetch keys
+  // ensure client
   const redisClient = createClient();
+
+  // fetch keys
   return redisClient.keys(keyPattern, cb);
 };
 
