@@ -1,5 +1,6 @@
 import { compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
+import uuidv1 from 'uuid/v1';
 import redis from 'redis';
 
 // local refs
@@ -70,14 +71,11 @@ export const createClient = optns => {
   // ref client
   let redisClient = client;
 
-  // obtain redis client
+  // obtain  or create redis client
   if (recreate || !redisClient) {
-    // create new redis client
     redisClient = redis.createClient(options);
-    redisClient.id = redisClient.id || Date.now();
+    redisClient.id = redisClient.id || uuidv1();
     redisClient.prefix = redisClient.prefix || prefix;
-
-    // set per process redis client if not exists
     client = client || redisClient;
   }
 
@@ -108,21 +106,25 @@ export const createClient = optns => {
  */
 export const createPubSub = optns => {
   // obtain options
-  const { recreate } = withDefaults(optns);
+  const { prefix, recreate, ...options } = withDefaults(optns);
 
   // ref clients
   let redisPublisher = publisher;
   let redisSubscriber = subscriber;
 
-  // create publisher if not exists
+  // obtain or create redis publisher client
   if (recreate || !redisPublisher) {
-    redisPublisher = createClient({ recreate: true, ...optns });
+    redisPublisher = redis.createClient(options);
+    redisPublisher.id = redisPublisher.id || uuidv1();
+    redisPublisher.prefix = redisPublisher.prefix || prefix;
     publisher = publisher || redisPublisher;
   }
 
-  // create subscriber if not exists
+  // obtain or create redis subscriber client
   if (recreate || !redisSubscriber) {
-    redisSubscriber = createClient({ recreate: true, ...optns });
+    redisSubscriber = redis.createClient(options);
+    redisSubscriber.id = redisSubscriber.id || uuidv1();
+    redisSubscriber.prefix = redisSubscriber.prefix || prefix;
     subscriber = subscriber || redisSubscriber;
   }
 
