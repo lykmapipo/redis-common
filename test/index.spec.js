@@ -4,6 +4,7 @@ import {
   createClient,
   createPubSub,
   createClients,
+  quit,
 } from '../src/index';
 
 describe('redis-common', () => {
@@ -86,5 +87,20 @@ describe('redis-common', () => {
     expect(subscriber.prefix).to.exist.and.be.equal('r');
 
     expect(publisher.uuid).to.not.be.equal(subscriber.uuid);
+  });
+
+  it('should quit all redis clients', () => {
+    expect(quit).to.exist.and.be.a('function');
+
+    const { client, publisher, subscriber } = createClients();
+
+    expect(client).to.exist;
+    expect(publisher).to.exist;
+    expect(subscriber).to.exist;
+
+    const quited = quit();
+    expect(quited.client).to.not.exist;
+    expect(quited.publisher).to.not.exist;
+    expect(quited.subscriber).to.not.exist;
   });
 });

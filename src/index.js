@@ -1,3 +1,4 @@
+import { forEach } from 'lodash';
 import { compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
@@ -22,7 +23,6 @@ let subscriber;
  * @public
  * @example
  *
- * const { withDefaults } = require('@lykmapipo/redis-common');
  * const redis = (process.env.REDIS_URL || { port: 6379, host: '127.0.0.1' });
  * const options = withDefaults({ redis })
  *
@@ -154,4 +154,39 @@ export const createPubSub = optns => {
 export const createClients = optns => {
   // create and return clients
   return { client: createClient(optns), ...createPubSub(optns) };
+};
+
+/**
+ * @function quit
+ * @name quit
+ * @description Quit and restore redis clients states
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * quit();
+ *
+ */
+export const quit = () => {
+  // clear subscriptions and listeners
+  if (subscriber) {
+    subscriber.unsubscribe();
+    subscriber.removeAllListeners();
+  }
+
+  // quit all clients
+  const clients = [publisher, subscriber, client];
+  forEach(clients, redisClient => redisClient.quit());
+
+  // reset clients
+  client = null;
+  publisher = null;
+  subscriber = null;
+
+  // return redis client states
+  return { client, publisher, subscriber };
 };
