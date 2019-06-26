@@ -158,6 +158,34 @@ export const createClients = optns => {
 };
 
 /**
+ * @function createMulti
+ * @name createMulti
+ * @description Create redis multi command object
+ * @return {Object} redis clients
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const multi = createMulti();
+ * mult.set('abc:1', 1).set('abc:2', 2).set('abc:3', 3).exec(done);
+ *
+ */
+export const createMulti = () => {
+  // ensure client
+  const redisClient = createClient();
+
+  // create multi
+  const redisMulti = redisClient.multi();
+
+  // return multi command object
+  return redisMulti;
+};
+
+/**
  * @function key
  * @name key
  * @description Generate data storage key

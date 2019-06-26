@@ -4,6 +4,7 @@ import {
   createClient,
   createPubSub,
   createClients,
+  createMulti,
   key,
   quit,
 } from '../src/index';
@@ -89,6 +90,15 @@ describe('redis-common', () => {
     expect(subscriber.prefix).to.exist.and.be.equal('r');
 
     expect(publisher.uuid).to.not.be.equal(subscriber.uuid);
+  });
+
+  it('should create redis client multi command object', () => {
+    expect(createMulti).to.exist.and.be.a('function');
+
+    const multi = createMulti();
+    expect(multi).to.exist;
+    expect(multi.exec).to.exist;
+    expect(multi.exec).to.be.a('function');
   });
 
   it('should create redis key', () => {
