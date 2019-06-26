@@ -2,7 +2,7 @@ import { compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import redis from 'redis';
 
-// caches
+// local refs
 let client;
 
 /**
@@ -66,17 +66,17 @@ export const createClient = optns => {
   const { prefix, recreate, ...options } = withDefaults(optns);
 
   // ref client
-  let redisClient;
+  let redisClient = client;
 
   // obtain redis client
-  if (recreate || !client) {
-    // create redis client
+  if (recreate || !redisClient) {
+    // create new redis client
     redisClient = redis.createClient(options);
-    client = redisClient;
+    redisClient.id = redisClient.id || Date.now();
+    redisClient.prefix = redisClient.prefix || prefix;
 
-    // ensure id and prefix
-    client.id = Date.now();
-    client.prefix = prefix;
+    // set per process redis client if not exists
+    client = redisClient;
   }
 
   // return redis client

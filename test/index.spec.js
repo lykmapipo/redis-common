@@ -28,4 +28,11 @@ describe('redis-common', () => {
     expect(client.id).to.exist;
     expect(client.prefix).to.exist.and.be.equal('re');
   });
+
+  it('should not re-create redis client', () => {
+    const a = createClient();
+    const b = createClient();
+    expect(a.id).to.be.equal(b.id);
+    expect(a.prefix).to.be.equal(b.prefix);
+  });
 });
