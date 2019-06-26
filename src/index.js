@@ -1,5 +1,9 @@
 import { compact, mergeObjects } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
+import redis from 'redis';
+
+// caches
+let client;
 
 /**
  * @function withDefaults
@@ -34,6 +38,49 @@ export const withDefaults = optns => {
 
   // return
   return options;
+};
+
+/**
+ * @function createClient
+ * @name createClient
+ * @description Create redis client or return existing one
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const client = createClient();
+ *
+ * const client = createClient({ recreate: true });
+ *
+ */
+export const createClient = optns => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref client
+  let redisClient;
+
+  // obtain redis client
+  if (recreate || !client) {
+    // create redis client
+    redisClient = redis.createClient(options);
+    client = redisClient;
+
+    // ensure id and prefix
+    client.id = Date.now();
+    client.prefix = prefix;
+  }
+
+  // return redis client
+  return redisClient;
 };
 
 /**
