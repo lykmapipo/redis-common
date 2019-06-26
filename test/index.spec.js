@@ -16,7 +16,7 @@ describe('redis-common', () => {
 
     const client = createClient();
     expect(client).to.exist;
-    expect(client.id).to.exist;
+    expect(client.uuid).to.exist;
     expect(client.prefix).to.exist.and.be.equal('r');
   });
 
@@ -25,14 +25,14 @@ describe('redis-common', () => {
 
     const client = createClient({ prefix: 're', recreate: true });
     expect(client).to.exist;
-    expect(client.id).to.exist;
+    expect(client.uuid).to.exist;
     expect(client.prefix).to.exist.and.be.equal('re');
   });
 
   it('should not re-create redis client', () => {
     const a = createClient();
     const b = createClient();
-    expect(a.id).to.be.equal(b.id);
+    expect(a.uuid).to.be.equal(b.uuid);
     expect(a.prefix).to.be.equal(b.prefix);
   });
 
@@ -42,13 +42,13 @@ describe('redis-common', () => {
     const { publisher, subscriber } = createPubSub();
 
     expect(publisher).to.exist;
-    expect(publisher.id).to.exist;
+    expect(publisher.uuid).to.exist;
     expect(publisher.prefix).to.exist.and.be.equal('r');
 
     expect(subscriber).to.exist;
-    expect(subscriber.id).to.exist;
+    expect(subscriber.uuid).to.exist;
     expect(subscriber.prefix).to.exist.and.be.equal('r');
 
-    expect(publisher.id).to.not.be.equal(subscriber.id);
+    expect(publisher.uuid).to.not.be.equal(subscriber.uuid);
   });
 });

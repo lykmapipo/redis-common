@@ -74,7 +74,7 @@ export const createClient = optns => {
   // obtain  or create redis client
   if (recreate || !redisClient) {
     redisClient = redis.createClient(options);
-    redisClient.id = redisClient.id || uuidv1();
+    redisClient.uuid = redisClient.uuid || uuidv1();
     redisClient.prefix = redisClient.prefix || prefix;
     client = client || redisClient;
   }
@@ -115,7 +115,7 @@ export const createPubSub = optns => {
   // obtain or create redis publisher client
   if (recreate || !redisPublisher) {
     redisPublisher = redis.createClient(options);
-    redisPublisher.id = redisPublisher.id || uuidv1();
+    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
     redisPublisher.prefix = redisPublisher.prefix || prefix;
     publisher = publisher || redisPublisher;
   }
@@ -123,7 +123,7 @@ export const createPubSub = optns => {
   // obtain or create redis subscriber client
   if (recreate || !redisSubscriber) {
     redisSubscriber = redis.createClient(options);
-    redisSubscriber.id = redisSubscriber.id || uuidv1();
+    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
     redisSubscriber.prefix = redisSubscriber.prefix || prefix;
     subscriber = subscriber || redisSubscriber;
   }
