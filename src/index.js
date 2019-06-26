@@ -242,8 +242,12 @@ export const keys = (pattern, done) => {
   const cb = isFunction(pattern) ? pattern : done;
   let keyPattern = isString(pattern) ? pattern : '';
 
+  // obtain options
+  const { prefix } = withDefaults();
+
   // obtain key
-  keyPattern = [key(pattern), '*'].join('');
+  keyPattern = compact([prefix, keyPattern]);
+  keyPattern = [...keyPattern, '*'].join('');
 
   // fetch keys
   const redisClient = createClient();
