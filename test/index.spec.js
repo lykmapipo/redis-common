@@ -111,10 +111,28 @@ describe('redis-common', () => {
     );
   });
 
-  it('should be able to get keys', done => {
+  it('should be able to get keys without pattern', done => {
     expect(keys).to.exist.and.be.a('function');
 
     keys((error, foundKeys) => {
+      expect(error).to.not.exist;
+      done(error, foundKeys);
+    });
+  });
+
+  it('should be able to get keys with given pattern', done => {
+    expect(keys).to.exist.and.be.a('function');
+
+    keys('users', (error, foundKeys) => {
+      expect(error).to.not.exist;
+      done(error, foundKeys);
+    });
+  });
+
+  it('should be able to get keys with given pattern', done => {
+    expect(keys).to.exist.and.be.a('function');
+
+    keys('users:abc:likes', (error, foundKeys) => {
       expect(error).to.not.exist;
       done(error, foundKeys);
     });

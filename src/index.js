@@ -243,10 +243,10 @@ export const keys = (pattern, done) => {
   let keyPattern = isString(pattern) ? pattern : '';
 
   // obtain options
-  const { prefix } = withDefaults();
+  const { prefix, separator } = withDefaults();
 
   // obtain key
-  keyPattern = compact([prefix, keyPattern]);
+  keyPattern = compact([prefix, ...keyPattern.split(separator)]).join(':');
   keyPattern = [...keyPattern, '*'].join('');
 
   // fetch keys
