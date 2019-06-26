@@ -4,6 +4,8 @@ import redis from 'redis';
 
 // local refs
 let client;
+let publisher;
+let subscriber;
 
 /**
  * @function withDefaults
@@ -76,11 +78,56 @@ export const createClient = optns => {
     redisClient.prefix = redisClient.prefix || prefix;
 
     // set per process redis client if not exists
-    client = redisClient;
+    client = client || redisClient;
   }
 
   // return redis client
   return redisClient;
+};
+
+/**
+ * @function createPubSub
+ * @name createPubSub
+ * @description Create redis pubsub clients
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new clients
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis pubsub clients
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const { publisher, subscriber } = createPubSub();
+ *
+ * const { publisher, subscriber } = createPubSub({ recreate: true });
+ *
+ */
+export const createPubSub = optns => {
+  // obtain options
+  const { recreate } = withDefaults(optns);
+
+  // ref clients
+  let redisPublisher = publisher;
+  let redisSubscriber = subscriber;
+
+  // create publisher if not exists
+  if (recreate || !redisPublisher) {
+    redisPublisher = createClient({ recreate: true, ...optns });
+    publisher = publisher || redisPublisher;
+  }
+
+  // create subscriber if not exists
+  if (recreate || !redisSubscriber) {
+    redisSubscriber = createClient({ recreate: true, ...optns });
+    subscriber = subscriber || redisSubscriber;
+  }
+
+  // return pub sub clients
+  return { publisher: redisPublisher, subscriber: redisSubscriber };
 };
 
 /**
