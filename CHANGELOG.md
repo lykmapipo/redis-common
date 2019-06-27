@@ -1,3 +1,15 @@
+#### 0.2.0 (2019-06-27)
+
+##### Documentation Changes
+
+*  update usage docs ([cc18db49](https://github.com/lykmapipo/redis-common/commit/cc18db490485fedfe259c4b4b89bbc6b30082d9f))
+*  update usage docs ([ee6e5c56](https://github.com/lykmapipo/redis-common/commit/ee6e5c5605e04b0f0947b0a450525db4a7425cd6))
+
+##### New Features
+
+*  add on to listen events via subscriber client ([1ce845ed](https://github.com/lykmapipo/redis-common/commit/1ce845ed537047b8fdf33c45918fa7ddcb8c2b00))
+*  add emit to publish event via publisher client ([da5d3248](https://github.com/lykmapipo/redis-common/commit/da5d3248dfdbe41e850f44fb2ec1c396bcef7209))
+
 #### 0.1.0 (2019-06-27)
 
 ##### Chores

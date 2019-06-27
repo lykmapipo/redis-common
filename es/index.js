@@ -1,5 +1,5 @@
 import { isEmpty, isFunction, isString, isNumber, forEach, last, initial, first, noop } from 'lodash';
-import { compact, mergeObjects, stringify, uniq, parse } from '@lykmapipo/common';
+import { compact, mergeObjects, stringify, uniq, isNotValue, parse } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
 import redis from 'redis';
@@ -35,6 +35,7 @@ const withDefaults = optns => {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
+    eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),
   };
 
   // merge and compact with defaults
@@ -347,7 +348,9 @@ const keys = (pattern, done) => {
   const { prefix, separator } = withDefaults();
 
   // obtain key
-  keyPattern = compact([prefix, ...keyPattern.split(separator)]).join(':');
+  keyPattern = compact([prefix, ...keyPattern.split(separator)]).join(
+    separator
+  );
   keyPattern = [...keyPattern, '*'].join('');
 
   // ensure client
@@ -511,4 +514,108 @@ const quit = () => {
   return { client, publisher, subscriber };
 };
 
-export { clear, count, createClient, createClients, createMulti, createPubSub, get, info, keyFor, keys, quit, set, withDefaults };
+/**
+ * @function emit
+ * @name emit
+ * @description Posts a message to the given channel
+ * @param {String} channel valid channel name or patterns
+ * @param {Mixed} message valid message to emit
+ * @param {Function} [done] callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * emit('user:click', { time: Date.now() });
+ *
+ */
+const emit = (channel, message, done) => {
+  // normalize arguments
+  let emitMessage =
+    isNotValue(message) || isFunction(message) ? channel : message;
+  let emitChannel =
+    isNotValue(message) || isFunction(message) ? 'default' : channel;
+  let cb = isFunction(message) ? message : done;
+
+  // obtain options
+  const { prefix, eventPrefix, separator } = withDefaults();
+
+  // ensure publisher redis client
+  const { publisher: redisPublisher } = createPubSub();
+
+  // ensure emit channel
+  emitChannel = compact([
+    prefix,
+    eventPrefix,
+    ...emitChannel.split(separator),
+  ]).join(separator);
+
+  // stringify channel message
+  // TODO add source process, timestamp, uuid, ip, macaddres etc
+  // TODO make message an object
+  emitMessage = stringify(emitMessage);
+
+  // obtain callback if present
+  // TODO return message with message uuid
+  cb = isFunction(cb) ? cb : noop;
+
+  // subscriber, publish message and return
+  return redisPublisher.publish(emitChannel, emitMessage, cb);
+};
+
+/**
+ * @function on
+ * @name on
+ * @description Listen for messages published to channels matching
+ * the given patterns
+ * @param {String} channel valid channel name or patterns
+ * @param {Function} done callback to invoke on message
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * on('user:click', (channel, message) => { ... });
+ *
+ */
+const on = (channel, done) => {
+  // normalize arguments
+  let emitChannel = isFunction(channel) ? 'default' : channel;
+  let cb = isFunction(channel) ? channel : done;
+
+  // obtain options
+  const { prefix, eventPrefix, separator } = withDefaults();
+
+  // ensure subscriber redis client
+  const { subscriber: redisSubscriber } = createPubSub();
+
+  // ensure emit channel
+  emitChannel = compact([
+    prefix,
+    eventPrefix,
+    ...emitChannel.split(separator),
+  ]).join(separator);
+
+  // obtain callback if present
+  cb = isFunction(cb) ? cb : noop;
+
+  // subscribe for events
+  redisSubscriber.subscribe(emitChannel);
+
+  // listen for event and invoke callback
+  return redisSubscriber.on('message', (receiveChannel, message) => {
+    if (receiveChannel === emitChannel) {
+      const parsedMessage = parse(message);
+      return cb(channel, parsedMessage);
+    }
+    return 0;
+  });
+};
+
+export { clear, count, createClient, createClients, createMulti, createPubSub, emit, get, info, keyFor, keys, on, quit, set, withDefaults };
