@@ -397,7 +397,7 @@ export const clear = (pattern, done) => {
   const keyPattern = isString(pattern) ? pattern : '';
 
   // TODO use LUA script
-  // const script = "for i, name in ipairs(redis.call('KEYS', 'keyPattern')) do redis.call('expire', name, 0); end";
+  // const script = "for i, name in ipairs(redis.call('KEYS', 'keyPattern')) do redis.call('DEL', name); end";
   // redisClient.eval(script, 0);
 
   // obtain keys
