@@ -476,7 +476,7 @@ export const count = (...patterns) => {
   // count for each key pattern
   forEach(keyPatterns, keyPattern => {
     // prepare count LUA script per pattern
-    const script = ['return #redis.pcall("keys", "', keyPattern, '")'].join('');
+    const script = `return #redis.pcall("keys", "${keyPattern}")`;
     // count using a lua script
     redisClient.eval(script, 0);
   });
