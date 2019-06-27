@@ -8,3 +8,4 @@ before_script:
 script:
   - commitlint-travis
   - npm test
+after_success: npm run coverage

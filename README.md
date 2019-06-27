@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lykmapipo/redis-common.svg?branch=master)](https://travis-ci.org/lykmapipo/redis-common)
 [![Dependencies Status](https://david-dm.org/lykmapipo/redis-common.svg?style=flat-square)](https://david-dm.org/lykmapipo/redis-common)
+[![Coverage Status](https://coveralls.io/repos/github/lykmapipo/redis-common/badge.svg?branch=master)](https://coveralls.io/github/lykmapipo/redis-common?branch=master)
 
 Re-usable helpers for redis
 
