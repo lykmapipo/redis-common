@@ -15,6 +15,7 @@ import {
   count,
   quit,
   emit,
+  on,
 } from '../src/index';
 
 describe('helpers', () => {
@@ -382,12 +383,32 @@ describe('pubsub', () => {
     });
   });
 
-  it('should emit event on give channel', done => {
+  it('should emit event on given channel', done => {
     emit('clicks', {}, (error, result) => {
       expect(error).to.not.exist;
       expect(result).to.exist;
       done(error, result);
     });
+  });
+
+  it('should listen event on default channel', done => {
+    const payload = {};
+    on((channel, message) => {
+      expect(channel).to.exist;
+      expect(message).to.exist.and.be.eql(payload);
+      done();
+    });
+    _.delay(() => emit(payload), 100);
+  });
+
+  it('should listen event on given channel', done => {
+    const payload = {};
+    on('clicks', (channel, message) => {
+      expect(channel).to.exist;
+      expect(message).to.exist.and.be.eql(payload);
+      done();
+    });
+    _.delay(() => emit('clicks', payload), 100);
   });
 
   after(done => clear(done));

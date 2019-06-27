@@ -11,6 +11,7 @@ import {
 } from 'lodash';
 import {
   compact,
+  isNotValue,
   mergeObjects,
   parse,
   stringify,
@@ -548,10 +549,12 @@ export const quit = () => {
  * emit('user:click', { time: Date.now() });
  *
  */
-export const emit = (channel = 'default', message = {}, done) => {
+export const emit = (channel, message, done) => {
   // normalize arguments
-  let emitMessage = isFunction(message) ? channel : message;
-  let emitChannel = isFunction(message) ? 'default' : channel;
+  let emitMessage =
+    isNotValue(message) || isFunction(message) ? channel : message;
+  let emitChannel =
+    isNotValue(message) || isFunction(message) ? 'default' : channel;
   let cb = isFunction(message) ? message : done;
 
   // obtain options
@@ -576,6 +579,58 @@ export const emit = (channel = 'default', message = {}, done) => {
   // TODO return message with message uuid
   cb = isFunction(cb) ? cb : noop;
 
-  // publish message and return
+  // subscriber, publish message and return
   return redisPublisher.publish(emitChannel, emitMessage, cb);
+};
+
+/**
+ * @function on
+ * @name on
+ * @description Listen for messages published to channels matching
+ * the given patterns
+ * @param {String} channel valid channel name or patterns
+ * @param {Function} done callback to invoke on message
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * on('user:click', (channel, message) => { ... });
+ *
+ */
+export const on = (channel, done) => {
+  // normalize arguments
+  let emitChannel = isFunction(channel) ? 'default' : channel;
+  let cb = isFunction(channel) ? channel : done;
+
+  // obtain options
+  const { prefix, eventPrefix, separator } = withDefaults();
+
+  // ensure subscriber redis client
+  const { subscriber: redisSubscriber } = createPubSub();
+
+  // ensure emit channel
+  emitChannel = compact([
+    prefix,
+    eventPrefix,
+    ...emitChannel.split(separator),
+  ]).join(separator);
+
+  // obtain callback if present
+  cb = isFunction(cb) ? cb : noop;
+
+  // subscribe for events
+  redisSubscriber.subscribe(emitChannel);
+
+  // listen for event and invoke callback
+  return redisSubscriber.on('message', (receiveChannel, message) => {
+    if (receiveChannel === emitChannel) {
+      const parsedMessage = parse(message);
+      return cb(channel, parsedMessage);
+    }
+    return 0;
+  });
 };
