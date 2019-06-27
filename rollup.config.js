@@ -8,6 +8,7 @@ export default [
       'os',
       'fs',
       'path',
+      'uuid/v1',
       ...keys(pkg.dependencies),
       ...keys(pkg.peerDependencies),
     ],

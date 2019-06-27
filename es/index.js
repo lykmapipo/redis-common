@@ -1,21 +1,5 @@
-import {
-  forEach,
-  first,
-  initial,
-  isEmpty,
-  isFunction,
-  isNumber,
-  isString,
-  last,
-  noop,
-} from 'lodash';
-import {
-  compact,
-  mergeObjects,
-  parse,
-  stringify,
-  uniq,
-} from '@lykmapipo/common';
+import { isEmpty, isFunction, isString, isNumber, forEach, last, initial, first, noop } from 'lodash';
+import { compact, mergeObjects, stringify, uniq, parse } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
 import redis from 'redis';
@@ -45,7 +29,7 @@ let subscriber;
  * // => { url: ...}
  *
  */
-export const withDefaults = optns => {
+const withDefaults = optns => {
   // defaults
   const defaults = {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
@@ -81,7 +65,7 @@ export const withDefaults = optns => {
  * const client = createClient({ recreate: true });
  *
  */
-export const createClient = optns => {
+const createClient = optns => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -121,7 +105,7 @@ export const createClient = optns => {
  * const { publisher, subscriber } = createPubSub({ recreate: true });
  *
  */
-export const createPubSub = optns => {
+const createPubSub = optns => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -168,7 +152,7 @@ export const createPubSub = optns => {
  * const { client, publisher, subscriber } = createClients({ new: true });
  *
  */
-export const createClients = optns => {
+const createClients = optns => {
   // create and return clients
   return { client: createClient(optns), ...createPubSub(optns) };
 };
@@ -190,7 +174,7 @@ export const createClients = optns => {
  * multi.set('abc:1', 1).set('abc:2', 2).set('abc:3', 3).exec(done);
  *
  */
-export const createMulti = () => {
+const createMulti = () => {
   // ensure client
   const redisClient = createClient();
 
@@ -221,7 +205,7 @@ export const createMulti = () => {
  * // => 'r:users:likes'
  *
  */
-export const keyFor = (...args) => {
+const keyFor = (...args) => {
   // obtain options
   const { prefix, separator } = withDefaults();
 
@@ -262,7 +246,7 @@ export const keyFor = (...args) => {
  * set('users:count', 1, (error, value, key) => { ... });
  *
  */
-export const set = (key, value, expiry, time, strategy, done) => {
+const set = (key, value, expiry, time, strategy, done) => {
   // do nothing
   if (isFunction(key)) {
     return key && key();
@@ -315,7 +299,7 @@ export const set = (key, value, expiry, time, strategy, done) => {
  * get('users:count', (error, value) => { ... });
  *
  */
-export const get = (key, done) => {
+const get = (key, done) => {
   // do nothing
   if (isFunction(key)) {
     return key && key();
@@ -354,7 +338,7 @@ export const get = (key, done) => {
  * keys('users', (error, keys) => { ... });
  *
  */
-export const keys = (pattern, done) => {
+const keys = (pattern, done) => {
   // normalize arguments
   const cb = isFunction(pattern) ? pattern : done;
   let keyPattern = isString(pattern) ? pattern : '';
@@ -391,7 +375,7 @@ export const keys = (pattern, done) => {
  * clear('users', error => { ... });
  *
  */
-export const clear = (pattern, done) => {
+const clear = (pattern, done) => {
   // normalize arguments
   const cb = isFunction(pattern) ? pattern : done;
   const keyPattern = isString(pattern) ? pattern : '';
@@ -434,7 +418,7 @@ export const clear = (pattern, done) => {
  * info((error, info) => { ... });
  *
  */
-export const info = done => {
+const info = done => {
   // ensure client
   const redisClient = createClient();
 
@@ -462,7 +446,7 @@ export const info = done => {
  * count('users:sessions*', 'users:visits*', (error, counts) => { ... });
  *
  */
-export const count = (...patterns) => {
+const count = (...patterns) => {
   // normalize patterns to array
   let keyPatterns = uniq([].concat(...patterns));
 
@@ -506,7 +490,7 @@ export const count = (...patterns) => {
  * quit();
  *
  */
-export const quit = () => {
+const quit = () => {
   // quit all clients
   // TODO client.end if callback passed
   const clients = [publisher, subscriber, client];
@@ -526,3 +510,5 @@ export const quit = () => {
   // return redis client states
   return { client, publisher, subscriber };
 };
+
+export { clear, count, createClient, createClients, createMulti, createPubSub, get, info, keyFor, keys, quit, set, withDefaults };
