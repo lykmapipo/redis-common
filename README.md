@@ -21,11 +21,7 @@ npm install --save @lykmapipo/redis-common
 ## Usage
 
 ```js
-import {
-    createClients,
-    clear,
-    quit
-} from '@lykmapipo/redis-common';
+import { createClients, clear, quit } from '@lykmapipo/redis-common';
 
 const { client, publisher, subscriber } = createClients();
 
