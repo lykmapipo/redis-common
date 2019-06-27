@@ -1,5 +1,21 @@
-import { forEach, isEmpty, isFunction, isNumber, isString, noop } from 'lodash';
-import { compact, mergeObjects, stringify, parse } from '@lykmapipo/common';
+import {
+  forEach,
+  first,
+  initial,
+  isEmpty,
+  isFunction,
+  isNumber,
+  isString,
+  last,
+  noop,
+} from 'lodash';
+import {
+  compact,
+  mergeObjects,
+  parse,
+  stringify,
+  uniq,
+} from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
 import redis from 'redis';
@@ -361,6 +377,7 @@ export const keys = (pattern, done) => {
  * @function clear
  * @name clear
  * @description Clear all data saved and their key
+ * @param {Function} done callback to invoke on success or failure
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -401,6 +418,7 @@ export const clear = (pattern, done) => {
  * @function info
  * @name info
  * @description Collect information and statistics about the server
+ * @param {Function} done callback to invoke on success or failure
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -419,6 +437,53 @@ export const info = done => {
   // fetch keys
   return redisClient.info((error /* ,info */) => {
     return done(error, redisClient.server_info);
+  });
+};
+
+/**
+ * @function count
+ * @name count
+ * @description Count the number of keys that match specified pattern
+ * @param {...String|String} args valid key patterns
+ * @param {Function} done callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * count('users', (error, counts) => { ... });
+ * count('users:sessions*', 'users:visits*', (error, counts) => { ... });
+ *
+ */
+export const count = (...patterns) => {
+  // normalize patterns to array
+  let keyPatterns = uniq([].concat(...patterns));
+
+  // obtain callback
+  const done = last(patterns);
+
+  // drop callback if provided
+  if (isFunction(done)) {
+    keyPatterns = initial(keyPatterns);
+  }
+
+  // initiate multi to run all count commands atomically
+  const redisClient = createMulti();
+
+  // count for each key pattern
+  forEach(keyPatterns, keyPattern => {
+    // prepare count LUA script per pattern
+    const script = ['return #redis.pcall("keys", "', keyPattern, '")'].join('');
+    // count using a lua script
+    redisClient.eval(script, 0);
+  });
+
+  // execute key counts
+  return redisClient.exec((error, counts) => {
+    return done(error, counts.length > 1 ? counts : first(counts));
   });
 };
 

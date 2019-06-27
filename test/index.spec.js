@@ -12,6 +12,7 @@ import {
   keys,
   clear,
   info,
+  count,
   quit,
 } from '../src/index';
 
@@ -316,6 +317,40 @@ describe('get', () => {
       expect(result).to.exist;
       expect(result).to.be.eql(object);
       done(error, result);
+    });
+  });
+
+  after(done => clear(done));
+});
+
+describe('count', () => {
+  beforeEach(done => clear(done));
+
+  before(done => {
+    createMulti()
+      .set('abc:1', 1)
+      .set('abc:2', 2)
+      .set('abc:3', 3)
+      .exec(done);
+  });
+
+  it('should be able to count size of keys of specifed pattern', done => {
+    count('abc:*', (error, keyCount) => {
+      expect(error).to.not.exist;
+      expect(keyCount).to.exist;
+      expect(keyCount).to.be.equal(3);
+      done(error, keyCount);
+    });
+  });
+
+  it('should be able to count size of keys of specifed patterns', done => {
+    count('abc:*', 'xx:*', (error, keyCounts) => {
+      expect(error).to.not.exist;
+      expect(keyCounts).to.exist;
+      expect(keyCounts).to.have.length(2);
+      expect(_.first(keyCounts)).to.be.equal(3);
+      expect(_.last(keyCounts)).to.be.equal(0);
+      done(error, keyCounts);
     });
   });
 
