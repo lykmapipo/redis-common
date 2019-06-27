@@ -38,6 +38,7 @@ quit();
 ```js
 REDIS_URL=redis://127.0.0.1:6379
 REDIS_KEY_PREFIX=r
+REDIS_EVENT_PREFIX=events
 REDIS_KEY_SEPARATOR=:
 ```
 
