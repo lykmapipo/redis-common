@@ -75,8 +75,8 @@
     "shelljs": "^0.8.3"
   },
   "dependencies": {
-    "@lykmapipo/common": ">=0.22.1",
-    "@lykmapipo/env": ">=0.9.3",
+    "@lykmapipo/common": ">=0.22.2",
+    "@lykmapipo/env": ">=0.9.4",
     "flat": ">=4.1.0",
     "lodash": ">=4.17.11",
     "redis": ">=2.8.0",
