@@ -272,15 +272,16 @@ export const keys = (pattern, done) => {
  *
  */
 export const quit = () => {
-  // clear subscriptions and listeners
-  if (subscriber) {
-    subscriber.unsubscribe();
-    subscriber.removeAllListeners();
-  }
-
   // quit all clients
+  // TODO client.end if callback passed
   const clients = [publisher, subscriber, client];
-  forEach(clients, redisClient => redisClient.quit());
+  forEach(clients, redisClient => {
+    // clear subscriptions and listeners
+    redisClient.unsubscribe();
+    redisClient.removeAllListeners();
+    // quit client
+    redisClient.quit();
+  });
 
   // reset clients
   client = null;
