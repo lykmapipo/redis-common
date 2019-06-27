@@ -396,6 +396,10 @@ export const clear = (pattern, done) => {
   const cb = isFunction(pattern) ? pattern : done;
   const keyPattern = isString(pattern) ? pattern : '';
 
+  // TODO use LUA script
+  // const script = "for i, name in ipairs(redis.call('KEYS', 'keyPattern')) do redis.call('expire', name, 0); end";
+  // redisClient.eval(script, 0);
+
   // obtain keys
   keys(keyPattern, (error, foundKeys) => {
     // back-off in case there is error
