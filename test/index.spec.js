@@ -1,17 +1,18 @@
-import { expect } from '@lykmapipo/test-helpers';
+import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
   createClient,
   createPubSub,
   createClients,
   createMulti,
-  key,
+  keyFor,
+  set,
   keys,
   clear,
   quit,
 } from '../src/index';
 
-describe('common', () => {
+describe('helpers', () => {
   it('should provide default options', () => {
     expect(withDefaults).to.exist.and.be.a('function');
 
@@ -104,10 +105,10 @@ describe('common', () => {
   });
 
   it('should create redis key', () => {
-    expect(key()).to.exist;
-    expect(key('ab')).to.be.equal('r:ab');
-    expect(key(['users', 'ab'])).to.be.equal('r:users:ab');
-    expect(key('users', 'likes', 'vegetables')).to.be.equal(
+    expect(keyFor()).to.exist;
+    expect(keyFor('ab')).to.be.equal('r:ab');
+    expect(keyFor(['users', 'ab'])).to.be.equal('r:users:ab');
+    expect(keyFor('users', 'likes', 'vegetables')).to.be.equal(
       'r:users:likes:vegetables'
     );
   });
@@ -153,6 +154,102 @@ describe('common', () => {
     expect(quited.publisher).to.not.exist;
     expect(quited.subscriber).to.not.exist;
   });
+});
+
+describe('set', () => {
+  before(done => clear(done));
+
+  it('should not set with no key and value', done => {
+    set((error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.not.exist;
+      done(error, result);
+    });
+  });
+
+  it('should not set with not value', done => {
+    const key = faker.random.uuid();
+
+    set(key, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.not.exist;
+      done(error, result);
+    });
+  });
+
+  it('should set string', done => {
+    const key = faker.random.uuid();
+    const value = faker.random.word();
+
+    set(key, value, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  it('should set number', done => {
+    const key = faker.random.uuid();
+    const value = faker.random.number();
+
+    set(key, value, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  it('should set array', done => {
+    const key = faker.random.uuid();
+    const value = [faker.random.word(), faker.random.word()];
+
+    set(key, value, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  it('should set plain object', done => {
+    const key = faker.random.uuid();
+    const value = faker.helpers.createTransaction();
+
+    set(key, value, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  it('should set expiry', done => {
+    const key = faker.random.uuid();
+    const value = faker.random.word();
+
+    set(key, value, 'EX', 1, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  it('should set save strategy', done => {
+    const key = faker.random.uuid();
+    const value = faker.random.word();
+
+    set(key, value, 'EX', 1, 'NX', (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  after(done => clear(done));
 });
 
 describe('clear', () => {

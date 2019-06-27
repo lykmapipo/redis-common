@@ -1,5 +1,5 @@
-import { forEach, isEmpty, isFunction, isString } from 'lodash';
-import { compact, mergeObjects } from '@lykmapipo/common';
+import { forEach, isEmpty, isFunction, isNumber, isString, noop } from 'lodash';
+import { compact, mergeObjects, stringify } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
 import redis from 'redis';
@@ -186,8 +186,8 @@ export const createMulti = () => {
 };
 
 /**
- * @function key
- * @name key
+ * @function keyFor
+ * @name keyFor
  * @description Generate data storage key
  * @param {...String|String} args valid key parts
  * @author lally elias <lallyelias87@gmail.com>
@@ -198,14 +198,14 @@ export const createMulti = () => {
  * @public
  * @example
  *
- * key('users');
+ * keyFor('users');
  * // => 'r:users';
  *
- * key('users', 'likes');
+ * keyFor('users', 'likes');
  * // => 'r:users:likes'
  *
  */
-export const key = (...args) => {
+export const keyFor = (...args) => {
   // obtain options
   const { prefix, separator } = withDefaults();
 
@@ -218,6 +218,70 @@ export const key = (...args) => {
 
   // return storage key
   return storageKey;
+};
+
+/**
+ * @function set
+ * @name set
+ * @description Set key to hold the value. If key already holds a value,
+ * it is overwritten, regardless of its type.
+ * @param {String} key key
+ * @param {Mixed} value value
+ * @param {String} [expiry] expiry strategy(i.e PX or EX)
+ * @param {Number} [time] expiry time(i.e seconds or milliseconds)
+ * @param {String} [strategy] save strategy(i.e NX or XX)
+ * @param {Function} done callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * set('users:count', 1);
+ *
+ * set('users:count', 1, 'EX', 2);
+ *
+ * set('users:count', 1, 'PX', 2000);
+ *
+ * set(key, value, 'EX', 1, 'NX');
+ *
+ * set('users:count', 1, (error, value, key) => { ... });
+ *
+ */
+export const set = (key, value, expiry, time, strategy, done) => {
+  // do nothing
+  if (isFunction(key)) {
+    return key && key();
+  }
+
+  // do nothing
+  if (isFunction(value)) {
+    return value && value();
+  }
+
+  // ensure client
+  const redisClient = createClient();
+
+  // prepare command
+  const setKey = keyFor(key);
+  const setValue = stringify(value);
+  const setExpiry = expiry && isString(expiry) ? expiry : undefined;
+  const setTime = time && isNumber(time) ? time : undefined;
+  const setStrategy = strategy && isString(strategy) ? strategy : undefined;
+
+  // derive callback
+  let next = noop;
+  next = isFunction(expiry) ? expiry : next;
+  next = isFunction(time) ? time : next;
+  next = isFunction(strategy) ? strategy : next;
+  next = isFunction(done) ? done : next;
+  const cb = error => next(error, value, setKey);
+
+  // set value and return
+  const args = compact([setKey, setValue, setExpiry, setTime, setStrategy, cb]);
+  return redisClient.set.call(redisClient, ...args);
 };
 
 /**
