@@ -257,6 +257,46 @@ export const keys = (pattern, done) => {
 };
 
 /**
+ * @function clear
+ * @name clear
+ * @description Clear all data saved and their key
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * clear(error => { ... });
+ *
+ * clear('users', error => { ... });
+ *
+ */
+export const clear = (pattern, done) => {
+  // normalize arguments
+  const cb = isFunction(pattern) ? pattern : done;
+  const keyPattern = isString(pattern) ? pattern : '';
+
+  // obtain keys
+  keys(keyPattern, (error, foundKeys) => {
+    // back-off in case there is error
+    if (error) {
+      return cb(error);
+    }
+
+    // initiate multi to run all commands atomically
+    const redisClient = createMulti();
+
+    // queue commands
+    forEach(foundKeys, foundKey => redisClient.del(foundKey));
+
+    // execute commands
+    return redisClient.exec(cb);
+  });
+};
+
+/**
  * @function quit
  * @name quit
  * @description Quit and restore redis clients states

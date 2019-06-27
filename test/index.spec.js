@@ -7,10 +7,11 @@ import {
   createMulti,
   key,
   keys,
+  clear,
   quit,
 } from '../src/index';
 
-describe('redis-common', () => {
+describe('common', () => {
   it('should provide default options', () => {
     expect(withDefaults).to.exist.and.be.a('function');
 
@@ -111,7 +112,7 @@ describe('redis-common', () => {
     );
   });
 
-  it('should be able to get keys without pattern', done => {
+  it('should get keys without pattern', done => {
     expect(keys).to.exist.and.be.a('function');
 
     keys((error, foundKeys) => {
@@ -120,7 +121,7 @@ describe('redis-common', () => {
     });
   });
 
-  it('should be able to get keys with given pattern', done => {
+  it('should get keys with given pattern', done => {
     expect(keys).to.exist.and.be.a('function');
 
     keys('users', (error, foundKeys) => {
@@ -129,7 +130,7 @@ describe('redis-common', () => {
     });
   });
 
-  it('should be able to get keys with given pattern', done => {
+  it('should get keys with given pattern', done => {
     expect(keys).to.exist.and.be.a('function');
 
     keys('users:abc:likes', (error, foundKeys) => {
@@ -152,4 +153,17 @@ describe('redis-common', () => {
     expect(quited.publisher).to.not.exist;
     expect(quited.subscriber).to.not.exist;
   });
+});
+
+describe('clear', () => {
+  beforeEach(done => clear(done));
+
+  it('should clear all data', done => {
+    clear((error, cleared) => {
+      expect(error).to.not.exist;
+      done(error, cleared);
+    });
+  });
+
+  after(done => clear(done));
 });
