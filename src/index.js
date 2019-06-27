@@ -1,5 +1,5 @@
 import { forEach, isEmpty, isFunction, isNumber, isString, noop } from 'lodash';
-import { compact, mergeObjects, stringify } from '@lykmapipo/common';
+import { compact, mergeObjects, stringify, parse } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
 import uuidv1 from 'uuid/v1';
 import redis from 'redis';
@@ -278,6 +278,47 @@ export const set = (key, value, expiry, time, strategy, done) => {
   // set value and return
   const args = compact([setKey, setValue, setExpiry, setTime, setStrategy, cb]);
   return redisClient.set.call(redisClient, ...args);
+};
+
+/**
+ * @function get
+ * @name get
+ * @description Get the value of key. If the key does not exist,
+ * null is returned.
+ * @param {String} key key
+ * @param {Function} done callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * get('users:count');
+ * get('users:count', (error, value) => { ... });
+ *
+ */
+export const get = (key, done) => {
+  // do nothing
+  if (isFunction(key)) {
+    return key && key();
+  }
+
+  // ensure client
+  const redisClient = createClient();
+
+  // prepare key
+  const getKey = keyFor(key);
+
+  // derive callback
+  let next = noop;
+  next = isFunction(done) ? done : next;
+  const cb = (error, value) => next(error, parse(value));
+
+  // get value and return
+  const args = compact([getKey, cb]);
+  return redisClient.get.call(redisClient, ...args);
 };
 
 /**

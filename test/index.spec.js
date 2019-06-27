@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
@@ -7,6 +8,7 @@ import {
   createMulti,
   keyFor,
   set,
+  get,
   keys,
   clear,
   quit,
@@ -245,6 +247,65 @@ describe('set', () => {
       expect(error).to.not.exist;
       expect(result).to.exist;
       expect(result).to.be.eql(value);
+      done(error, result);
+    });
+  });
+
+  after(done => clear(done));
+});
+
+describe('get', () => {
+  before(done => clear(done));
+
+  const keyString = faker.random.uuid();
+  const string = faker.random.word();
+
+  const keyNumber = faker.random.uuid();
+  const number = faker.random.number();
+
+  const keyArray = faker.random.uuid();
+  const array = [faker.random.word(), faker.random.word()];
+
+  const keyObject = faker.random.uuid();
+  const object = _.omit(faker.helpers.createTransaction(), 'date');
+
+  before(done => set(keyString, string, done));
+  before(done => set(keyNumber, number, done));
+  before(done => set(keyArray, array, done));
+  before(done => set(keyObject, object, done));
+
+  it('should get string', done => {
+    get(keyString, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(string);
+      done(error, result);
+    });
+  });
+
+  it('should get number', done => {
+    get(keyNumber, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(number);
+      done(error, result);
+    });
+  });
+
+  it('should get array', done => {
+    get(keyArray, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(array);
+      done(error, result);
+    });
+  });
+
+  it('should get plain object', done => {
+    get(keyObject, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      expect(result).to.be.eql(object);
       done(error, result);
     });
   });
