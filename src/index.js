@@ -23,10 +23,10 @@ let subscriber;
  * @public
  * @example
  *
- * const redis = (process.env.REDIS_URL || { port: 6379, host: '127.0.0.1' });
- * const options = withDefaults({ redis })
+ * const optns = { port: 6379, host: '127.0.0.1', url: process.env.REDIS_URL };
+ * const options = withDefaults(optns);
  *
- * // => { redis: ...}
+ * // => { url: ...}
  *
  */
 export const withDefaults = optns => {
