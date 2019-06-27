@@ -14,6 +14,7 @@ import {
   info,
   count,
   quit,
+  emit,
 } from '../src/index';
 
 describe('helpers', () => {
@@ -364,6 +365,28 @@ describe('clear', () => {
     clear((error, cleared) => {
       expect(error).to.not.exist;
       done(error, cleared);
+    });
+  });
+
+  after(done => clear(done));
+});
+
+describe('pubsub', () => {
+  beforeEach(done => clear(done));
+
+  it('should emit event on default channel', done => {
+    emit({}, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      done(error, result);
+    });
+  });
+
+  it('should emit event on give channel', done => {
+    emit('clicks', {}, (error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.exist;
+      done(error, result);
     });
   });
 

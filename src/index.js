@@ -51,6 +51,7 @@ export const withDefaults = optns => {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
+    eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),
   };
 
   // merge and compact with defaults
@@ -363,7 +364,9 @@ export const keys = (pattern, done) => {
   const { prefix, separator } = withDefaults();
 
   // obtain key
-  keyPattern = compact([prefix, ...keyPattern.split(separator)]).join(':');
+  keyPattern = compact([prefix, ...keyPattern.split(separator)]).join(
+    separator
+  );
   keyPattern = [...keyPattern, '*'].join('');
 
   // ensure client
@@ -525,4 +528,54 @@ export const quit = () => {
 
   // return redis client states
   return { client, publisher, subscriber };
+};
+
+/**
+ * @function emit
+ * @name emit
+ * @description Posts a message to the given channel
+ * @param {String} channel valid channel name or patterns
+ * @param {Mixed} message valid message to emit
+ * @param {Function} [done] callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * emit('user:click', { time: Date.now() });
+ *
+ */
+export const emit = (channel = 'default', message = {}, done) => {
+  // normalize arguments
+  let emitMessage = isFunction(message) ? channel : message;
+  let emitChannel = isFunction(message) ? 'default' : channel;
+  let cb = isFunction(message) ? message : done;
+
+  // obtain options
+  const { prefix, eventPrefix, separator } = withDefaults();
+
+  // ensure publisher redis client
+  const { publisher: redisPublisher } = createPubSub();
+
+  // ensure emit channel
+  emitChannel = compact([
+    prefix,
+    eventPrefix,
+    ...emitChannel.split(separator),
+  ]).join(separator);
+
+  // stringify channel message
+  // TODO add source process, timestamp, uuid, ip, macaddres etc
+  // TODO make message an object
+  emitMessage = stringify(emitMessage);
+
+  // obtain callback if present
+  // TODO return message with message uuid
+  cb = isFunction(cb) ? cb : noop;
+
+  // publish message and return
+  return redisPublisher.publish(emitChannel, emitMessage, cb);
 };
