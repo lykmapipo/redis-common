@@ -240,13 +240,9 @@ export const keyFor = (...args) => {
  * @example
  *
  * set('users:count', 1);
- *
  * set('users:count', 1, 'EX', 2);
- *
  * set('users:count', 1, 'PX', 2000);
- *
- * set(key, value, 'EX', 1, 'NX');
- *
+ * set('users:count', 1, 'EX', 1, 'NX');
  * set('users:count', 1, (error, value, key) => { ... });
  *
  */
