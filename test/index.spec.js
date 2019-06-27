@@ -11,6 +11,7 @@ import {
   get,
   keys,
   clear,
+  info,
   quit,
 } from '../src/index';
 
@@ -155,6 +156,14 @@ describe('helpers', () => {
     expect(quited.client).to.not.exist;
     expect(quited.publisher).to.not.exist;
     expect(quited.subscriber).to.not.exist;
+  });
+
+  it('should obtain redis server info', done => {
+    info((error, serverInfo) => {
+      expect(error).to.not.exist;
+      expect(serverInfo).to.exist;
+      done(error, serverInfo);
+    });
   });
 });
 

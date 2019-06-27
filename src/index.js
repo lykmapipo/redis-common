@@ -398,6 +398,31 @@ export const clear = (pattern, done) => {
 };
 
 /**
+ * @function info
+ * @name info
+ * @description Collect information and statistics about the server
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * info((error, info) => { ... });
+ *
+ */
+export const info = done => {
+  // ensure client
+  const redisClient = createClient();
+
+  // fetch keys
+  return redisClient.info((error /* ,info */) => {
+    return done(error, redisClient.server_info);
+  });
+};
+
+/**
  * @function quit
  * @name quit
  * @description Quit and restore redis clients states
