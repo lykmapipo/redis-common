@@ -1,4 +1,4 @@
-# redis-common(WIP)
+# redis-common
 
 [![Build Status](https://travis-ci.org/lykmapipo/redis-common.svg?branch=master)](https://travis-ci.org/lykmapipo/redis-common)
 [![Dependencies Status](https://david-dm.org/lykmapipo/redis-common.svg?style=flat-square)](https://david-dm.org/lykmapipo/redis-common)
@@ -23,39 +23,22 @@ npm install --save @lykmapipo/redis-common
 ```js
 import {
     createClients,
-    createClient,
-    createPublisher,
-    createSubscriber,
-    publish,
-    subscribe,
-    withLock,
     clear,
-    disconnect
+    quit
 } from '@lykmapipo/redis-common';
 
-const { client, publisher, subscriber } = createClients({ new: true });
+const { client, publisher, subscriber } = createClients();
 
-const client = createClient();
-const subscriber = createSubscriber();
-const publisher = createPublisher();
+clear('users', error => {});
 
-publish(eventName, data);
-subscribe(eventName, data => {});
+quit();
+```
 
-withLock(lockName, ttl, done => {
-    //do your work
-    done();
-});
-
-withLock(lockName, done => {
-    //do your work
-    done();
-});
-
-clear(pattern, () => {});
-clear(() => {});
-
-disconnect(() => {});
+## Environment
+```js
+REDIS_URL=redis://127.0.0.1:6379
+REDIS_KEY_PREFIX=r
+REDIS_KEY_SEPARATOR=:
 ```
 
 ## Test
