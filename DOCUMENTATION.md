@@ -67,6 +67,76 @@ const client = createClient({ recreate: true });
 
 
 
+#### createPublisher(optns) 
+
+Create redis publisher client
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| optns | `Object`  | valid options | &nbsp; |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+const publisher = createPublisher();
+
+const publisher = createPublisher({ recreate: true });
+```
+
+
+##### Returns
+
+
+- `Object`  redis publisher client
+
+
+
+#### createSubscriber(optns) 
+
+Create redis subscriber client
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| optns | `Object`  | valid options | &nbsp; |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+const subscriber = createSubscriber();
+
+const subscriber = createSubscriber({ recreate: true });
+```
+
+
+##### Returns
+
+
+- `Object`  redis subscriber client
+
+
+
 #### createPubSub(optns) 
 
 Create redis pubsub clients
@@ -411,6 +481,168 @@ Quit and restore redis clients states
 ```javascript
 
 quit();
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### emit(channel, message[, done]) 
+
+Posts a message to the given channel
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| channel | `String`  | valid channel name or patterns | &nbsp; |
+| message | `Mixed`  | valid message to emit | &nbsp; |
+| done | `Function`  | callback to invoke on success or failure | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+emit('user:clicks', { time: Date.now() });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### publish(channel, message[, done]) 
+
+Posts a message to the given channel
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| channel | `String`  | valid channel name or patterns | &nbsp; |
+| message | `Mixed`  | valid message to publish | &nbsp; |
+| done | `Function`  | callback to invoke on success or failure | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+publish('user:clicks', { time: Date.now() });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### on(channel, done) 
+
+Listen for messages published to channels matching the given patterns
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| channel | `String`  | valid channel name or patterns | &nbsp; |
+| done | `Function`  | callback to invoke on message | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+on('user:clicks', (channel, message) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### subscribe(channel, done) 
+
+Listen for messages published to channels matching the given patterns
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| channel | `String`  | valid channel name or patterns | &nbsp; |
+| done | `Function`  | callback to invoke on message | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+subscribe('user:clicks', (channel, message) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### unsubscribe(channel, done) 
+
+Stop listen for messages published to channels matching the given patterns
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| channel | `String`  | valid channel name or patterns | &nbsp; |
+| done | `Function`  | callback to invoke on message | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+unsubscribe('user:clicks', (channel, count) => { ... });
 ```
 
 
