@@ -4,6 +4,7 @@ import {
   withDefaults,
   createClient,
   createPublisher,
+  createSubscriber,
   createPubSub,
   createClients,
   createMulti,
@@ -68,6 +69,24 @@ describe('helpers', () => {
   it('should not re-create publisher redis client', () => {
     const a = createPublisher();
     const b = createPublisher();
+
+    expect(a.uuid).to.be.equal(b.uuid);
+    expect(a.prefix).to.be.equal(b.prefix);
+  });
+
+  it('should create subscriber redis client', () => {
+    expect(createSubscriber).to.exist.and.be.a('function');
+
+    const subscriber = createSubscriber();
+
+    expect(subscriber).to.exist;
+    expect(subscriber.uuid).to.exist;
+    expect(subscriber.prefix).to.exist.and.be.equal('r');
+  });
+
+  it('should not re-create subscriber redis client', () => {
+    const a = createSubscriber();
+    const b = createSubscriber();
 
     expect(a.uuid).to.be.equal(b.uuid);
     expect(a.prefix).to.be.equal(b.prefix);

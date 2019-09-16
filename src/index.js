@@ -107,9 +107,9 @@ export const createClient = optns => {
  * @name createPublisher
  * @description Create redis publisher client
  * @param {Object} optns valid options
- * @param {Boolean} [optns.recreate=false] whether to create new clients
+ * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis publisher clients
+ * @return {Object} redis publisher client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -143,6 +143,46 @@ export const createPublisher = optns => {
 };
 
 /**
+ * @function createSubscriber
+ * @name createSubscriber
+ * @description Create redis subscriber client
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis subscriber client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const subscriber = createSubscriber();
+ *
+ * const subscriber = createSubscriber({ recreate: true });
+ *
+ */
+export const createSubscriber = optns => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref subscriber
+  let redisSubscriber = subscriber;
+
+  // obtain or create redis subscriber client
+  if (recreate || !redisSubscriber) {
+    redisSubscriber = redis.createClient(options);
+    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
+    redisSubscriber.prefix = redisSubscriber.prefix || prefix;
+    subscriber = subscriber || redisSubscriber;
+  }
+
+  // return subscriber client
+  return redisSubscriber;
+};
+
+/**
  * @function createPubSub
  * @name createPubSub
  * @description Create redis pubsub clients
@@ -164,20 +204,9 @@ export const createPublisher = optns => {
  *
  */
 export const createPubSub = optns => {
-  // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
-
   // ref clients
   const redisPublisher = createPublisher(optns);
-  let redisSubscriber = subscriber;
-
-  // obtain or create redis subscriber client
-  if (recreate || !redisSubscriber) {
-    redisSubscriber = redis.createClient(options);
-    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
-    redisSubscriber.prefix = redisSubscriber.prefix || prefix;
-    subscriber = subscriber || redisSubscriber;
-  }
+  const redisSubscriber = createSubscriber(optns);
 
   // return pub sub clients
   return { publisher: redisPublisher, subscriber: redisSubscriber };
