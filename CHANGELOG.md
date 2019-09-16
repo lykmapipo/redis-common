@@ -1,3 +1,21 @@
+#### 0.3.0 (2019-09-16)
+
+##### Chores
+
+* **ci:**  force use latest node ([34f9e734](https://github.com/lykmapipo/redis-common/commit/34f9e734afe364551f09e31124c9cc94b40e6379))
+
+##### New Features
+
+*  provide unsubscribe helper ([d5068b79](https://github.com/lykmapipo/redis-common/commit/d5068b798ddf8a4c86922fa8d1762247193281f3))
+*  provide subscribe shortcut ([4962aacb](https://github.com/lykmapipo/redis-common/commit/4962aacbf03bfb6581f147135663236acc291e97))
+*  add publish shortcut ([8853d531](https://github.com/lykmapipo/redis-common/commit/8853d5313f926b3a890ad56d4aceeedd267adb21))
+*  add createSubscriber helper ([b29f7b52](https://github.com/lykmapipo/redis-common/commit/b29f7b52d758d5adfd0095ca1075efd4f6a84fe6))
+*  add createPublisher helper ([7aa4809a](https://github.com/lykmapipo/redis-common/commit/7aa4809a215c391a0aaf30ae7055a3d6cc2cfb6e))
+
+##### Refactors
+
+*  use publisher or subscriber on emit and on ([ac3d59a8](https://github.com/lykmapipo/redis-common/commit/ac3d59a896c4e8fffe44d4da938ae3c98d9e9380))
+
 #### 0.2.4 (2019-09-16)
 
 ##### Chores

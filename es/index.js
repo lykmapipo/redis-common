@@ -73,7 +73,7 @@ const createClient = optns => {
   // ref client
   let redisClient = client;
 
-  // obtain  or create redis client
+  // obtain or create redis client
   if (recreate || !redisClient) {
     redisClient = redis.createClient(options);
     redisClient.uuid = redisClient.uuid || uuidv1();
@@ -83,6 +83,86 @@ const createClient = optns => {
 
   // return redis client
   return redisClient;
+};
+
+/**
+ * @function createPublisher
+ * @name createPublisher
+ * @description Create redis publisher client
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis publisher client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const publisher = createPublisher();
+ *
+ * const publisher = createPublisher({ recreate: true });
+ *
+ */
+const createPublisher = optns => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref publisher
+  let redisPublisher = publisher;
+
+  // obtain or create redis publisher client
+  if (recreate || !redisPublisher) {
+    redisPublisher = redis.createClient(options);
+    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
+    redisPublisher.prefix = redisPublisher.prefix || prefix;
+    publisher = publisher || redisPublisher;
+  }
+
+  // return pubisher client
+  return redisPublisher;
+};
+
+/**
+ * @function createSubscriber
+ * @name createSubscriber
+ * @description Create redis subscriber client
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis subscriber client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const subscriber = createSubscriber();
+ *
+ * const subscriber = createSubscriber({ recreate: true });
+ *
+ */
+const createSubscriber = optns => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref subscriber
+  let redisSubscriber = subscriber;
+
+  // obtain or create redis subscriber client
+  if (recreate || !redisSubscriber) {
+    redisSubscriber = redis.createClient(options);
+    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
+    redisSubscriber.prefix = redisSubscriber.prefix || prefix;
+    subscriber = subscriber || redisSubscriber;
+  }
+
+  // return subscriber client
+  return redisSubscriber;
 };
 
 /**
@@ -107,28 +187,9 @@ const createClient = optns => {
  *
  */
 const createPubSub = optns => {
-  // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
-
   // ref clients
-  let redisPublisher = publisher;
-  let redisSubscriber = subscriber;
-
-  // obtain or create redis publisher client
-  if (recreate || !redisPublisher) {
-    redisPublisher = redis.createClient(options);
-    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
-    redisPublisher.prefix = redisPublisher.prefix || prefix;
-    publisher = publisher || redisPublisher;
-  }
-
-  // obtain or create redis subscriber client
-  if (recreate || !redisSubscriber) {
-    redisSubscriber = redis.createClient(options);
-    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
-    redisSubscriber.prefix = redisSubscriber.prefix || prefix;
-    subscriber = subscriber || redisSubscriber;
-  }
+  const redisPublisher = createPublisher(optns);
+  const redisSubscriber = createSubscriber(optns);
 
   // return pub sub clients
   return { publisher: redisPublisher, subscriber: redisSubscriber };
@@ -384,7 +445,9 @@ const clear = (pattern, done) => {
   const keyPattern = isString(pattern) ? pattern : '';
 
   // TODO use LUA script
-  // const script = "for i, name in ipairs(redis.call('KEYS', 'keyPattern')) do redis.call('DEL', name); end";
+  // const script = "for i, name in
+  // ipairs(redis.call('KEYS', 'keyPattern'))
+  // do redis.call('DEL', name); end";
   // redisClient.eval(script, 0);
 
   // obtain keys
@@ -529,7 +592,7 @@ const quit = () => {
  * @public
  * @example
  *
- * emit('user:click', { time: Date.now() });
+ * emit('user:clicks', { time: Date.now() });
  *
  */
 const emit = (channel, message, done) => {
@@ -544,7 +607,7 @@ const emit = (channel, message, done) => {
   const { prefix, eventPrefix, separator } = withDefaults();
 
   // ensure publisher redis client
-  const { publisher: redisPublisher } = createPubSub();
+  const redisPublisher = createPublisher();
 
   // ensure emit channel
   emitChannel = compact([
@@ -567,6 +630,26 @@ const emit = (channel, message, done) => {
 };
 
 /**
+ * @function publish
+ * @name publish
+ * @description Posts a message to the given channel
+ * @param {String} channel valid channel name or patterns
+ * @param {Mixed} message valid message to publish
+ * @param {Function} [done] callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * publish('user:clicks', { time: Date.now() });
+ *
+ */
+const publish = emit;
+
+/**
  * @function on
  * @name on
  * @description Listen for messages published to channels matching
@@ -581,7 +664,7 @@ const emit = (channel, message, done) => {
  * @public
  * @example
  *
- * on('user:click', (channel, message) => { ... });
+ * on('user:clicks', (channel, message) => { ... });
  *
  */
 const on = (channel, done) => {
@@ -593,7 +676,7 @@ const on = (channel, done) => {
   const { prefix, eventPrefix, separator } = withDefaults();
 
   // ensure subscriber redis client
-  const { subscriber: redisSubscriber } = createPubSub();
+  const redisSubscriber = createSubscriber();
 
   // ensure emit channel
   emitChannel = compact([
@@ -612,10 +695,75 @@ const on = (channel, done) => {
   return redisSubscriber.on('message', (receiveChannel, message) => {
     if (receiveChannel === emitChannel) {
       const parsedMessage = parse(message);
-      return cb(channel, parsedMessage);
+      return cb(emitChannel, parsedMessage);
     }
     return 0;
   });
 };
 
-export { clear, count, createClient, createClients, createMulti, createPubSub, emit, get, info, keyFor, keys, on, quit, set, withDefaults };
+/**
+ * @function subscribe
+ * @name subscribe
+ * @description Listen for messages published to channels matching
+ * the given patterns
+ * @param {String} channel valid channel name or patterns
+ * @param {Function} done callback to invoke on message
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * subscribe('user:clicks', (channel, message) => { ... });
+ *
+ */
+const subscribe = on;
+
+/**
+ * @function unsubscribe
+ * @name unsubscribe
+ * @description Stop listen for messages published to channels matching
+ * the given patterns
+ * @param {String} channel valid channel name or patterns
+ * @param {Function} done callback to invoke on message
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * unsubscribe('user:clicks', (channel, count) => { ... });
+ *
+ */
+const unsubscribe = (channel, done) => {
+  // normalize arguments
+  let emitChannel = isFunction(channel) ? '*' : channel;
+  let cb = isFunction(channel) ? channel : done;
+
+  // obtain options
+  const { prefix, eventPrefix, separator } = withDefaults();
+
+  // ensure emit channel
+  emitChannel = compact([
+    prefix,
+    eventPrefix,
+    ...emitChannel.split(separator),
+  ]).join(separator);
+
+  // obtain callback if present
+  cb = isFunction(cb) ? cb : noop;
+
+  // if no subscribe return
+  if (!subscriber) {
+    return cb(null, emitChannel);
+  }
+
+  // unsubscribe for events
+  return subscriber.unsubscribe(emitChannel, cb);
+};
+
+export { clear, count, createClient, createClients, createMulti, createPubSub, createPublisher, createSubscriber, emit, get, info, keyFor, keys, on, publish, quit, set, subscribe, unsubscribe, withDefaults };
