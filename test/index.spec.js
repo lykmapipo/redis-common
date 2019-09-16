@@ -16,8 +16,6 @@ import {
   info,
   count,
   quit,
-  emit,
-  on,
 } from '../src';
 
 describe('helpers', () => {
@@ -184,6 +182,14 @@ describe('helpers', () => {
     });
   });
 
+  it('should obtain redis server info', done => {
+    info((error, serverInfo) => {
+      expect(error).to.not.exist;
+      expect(serverInfo).to.exist;
+      done(error, serverInfo);
+    });
+  });
+
   it('should quit all redis clients', () => {
     expect(quit).to.exist.and.be.a('function');
 
@@ -197,14 +203,6 @@ describe('helpers', () => {
     expect(quited.client).to.not.exist;
     expect(quited.publisher).to.not.exist;
     expect(quited.subscriber).to.not.exist;
-  });
-
-  it('should obtain redis server info', done => {
-    info((error, serverInfo) => {
-      expect(error).to.not.exist;
-      expect(serverInfo).to.exist;
-      done(error, serverInfo);
-    });
   });
 });
 
@@ -324,6 +322,14 @@ describe('get', () => {
   before(done => set(keyArray, array, done));
   before(done => set(keyObject, object, done));
 
+  it('should return', done => {
+    get((error, result) => {
+      expect(error).to.not.exist;
+      expect(result).to.not.exist;
+      done(error, result);
+    });
+  });
+
   it('should get string', done => {
     get(keyString, (error, result) => {
       expect(error).to.not.exist;
@@ -405,48 +411,6 @@ describe('clear', () => {
       expect(error).to.not.exist;
       done(error, cleared);
     });
-  });
-
-  after(done => clear(done));
-});
-
-describe('pubsub - emit & on', () => {
-  beforeEach(done => clear(done));
-
-  it('should emit event on default channel', done => {
-    emit({}, (error, result) => {
-      expect(error).to.not.exist;
-      expect(result).to.exist;
-      done(error, result);
-    });
-  });
-
-  it('should emit event on given channel', done => {
-    emit('clicks', {}, (error, result) => {
-      expect(error).to.not.exist;
-      expect(result).to.exist;
-      done(error, result);
-    });
-  });
-
-  it('should listen event on default channel', done => {
-    const payload = {};
-    on((channel, message) => {
-      expect(channel).to.exist;
-      expect(message).to.exist.and.be.eql(payload);
-      done();
-    });
-    _.delay(() => emit(payload), 100);
-  });
-
-  it('should listen event on given channel', done => {
-    const payload = {};
-    on('clicks', (channel, message) => {
-      expect(channel).to.exist;
-      expect(message).to.exist.and.be.eql(payload);
-      done();
-    });
-    _.delay(() => emit('clicks', payload), 100);
   });
 
   after(done => clear(done));

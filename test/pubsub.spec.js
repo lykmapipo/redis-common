@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import { expect } from '@lykmapipo/test-helpers';
-import { clear, publish, subscribe } from '../src';
+import { clear, emit, on, publish, subscribe, unsubscribe } from '../src';
 
-describe('pubsub - publish & subscribe', () => {
+describe('publish & subscribe', () => {
+  beforeEach(done => unsubscribe(done));
   beforeEach(done => clear(done));
 
   it('should publish event on default channel', done => {
@@ -41,5 +42,16 @@ describe('pubsub - publish & subscribe', () => {
     _.delay(() => publish('clicks', payload), 100);
   });
 
+  it('should listen event on given channel', done => {
+    const payload = {};
+    on('logs', (channel, message) => {
+      expect(channel).to.exist;
+      expect(message).to.exist.and.be.eql(payload);
+      done();
+    });
+    _.delay(() => emit('logs', payload), 100);
+  });
+
+  after(done => unsubscribe(done));
   after(done => clear(done));
 });

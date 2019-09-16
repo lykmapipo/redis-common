@@ -10,7 +10,7 @@
     "build": "rollup -c",
     "lint": "eslint --fix --ext .js src/ test/ rollup.config.js",
     "pretest": "npm run lint",
-    "test": "NODE_ENV=test nyc --reporter=html --reporter=text mocha --exit --require @babel/register test/**/*.spec.js",
+    "test": "NODE_ENV=test nyc --reporter=html --reporter=text mocha --exit --timeout=8000 --require @babel/register test/**/*.spec.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "docs": "doxdox 'lib/**/*.js' -p package.json -l markdown -o DOCUMENTATION.md",
     "cmt": "git add -A && git-cz",

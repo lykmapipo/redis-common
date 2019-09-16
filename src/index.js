@@ -609,7 +609,7 @@ export const quit = () => {
  * @public
  * @example
  *
- * emit('user:click', { time: Date.now() });
+ * emit('user:clicks', { time: Date.now() });
  *
  */
 export const emit = (channel, message, done) => {
@@ -661,7 +661,7 @@ export const emit = (channel, message, done) => {
  * @public
  * @example
  *
- * publish('user:click', { time: Date.now() });
+ * publish('user:clicks', { time: Date.now() });
  *
  */
 export const publish = emit;
@@ -681,7 +681,7 @@ export const publish = emit;
  * @public
  * @example
  *
- * on('user:click', (channel, message) => { ... });
+ * on('user:clicks', (channel, message) => { ... });
  *
  */
 export const on = (channel, done) => {
@@ -733,7 +733,52 @@ export const on = (channel, done) => {
  * @public
  * @example
  *
- * subscribe('user:click', (channel, message) => { ... });
+ * subscribe('user:clicks', (channel, message) => { ... });
  *
  */
 export const subscribe = on;
+
+/**
+ * @function unsubscribe
+ * @name unsubscribe
+ * @description Stop listen for messages published to channels matching
+ * the given patterns
+ * @param {String} channel valid channel name or patterns
+ * @param {Function} done callback to invoke on message
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * unsubscribe('user:clicks', (channel, count) => { ... });
+ *
+ */
+export const unsubscribe = (channel, done) => {
+  // normalize arguments
+  let emitChannel = isFunction(channel) ? '*' : channel;
+  let cb = isFunction(channel) ? channel : done;
+
+  // obtain options
+  const { prefix, eventPrefix, separator } = withDefaults();
+
+  // ensure emit channel
+  emitChannel = compact([
+    prefix,
+    eventPrefix,
+    ...emitChannel.split(separator),
+  ]).join(separator);
+
+  // obtain callback if present
+  cb = isFunction(cb) ? cb : noop;
+
+  // if no subscribe return
+  if (!subscriber) {
+    return cb(null, emitChannel);
+  }
+
+  // unsubscribe for events
+  return subscriber.unsubscribe(emitChannel, cb);
+};
