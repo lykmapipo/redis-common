@@ -712,8 +712,28 @@ export const on = (channel, done) => {
   return redisSubscriber.on('message', (receiveChannel, message) => {
     if (receiveChannel === emitChannel) {
       const parsedMessage = parse(message);
-      return cb(channel, parsedMessage);
+      return cb(emitChannel, parsedMessage);
     }
     return 0;
   });
 };
+
+/**
+ * @function subscribe
+ * @name subscribe
+ * @description Listen for messages published to channels matching
+ * the given patterns
+ * @param {String} channel valid channel name or patterns
+ * @param {Function} done callback to invoke on message
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * subscribe('user:click', (channel, message) => { ... });
+ *
+ */
+export const subscribe = on;

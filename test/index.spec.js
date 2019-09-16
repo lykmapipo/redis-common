@@ -18,7 +18,7 @@ import {
   quit,
   emit,
   on,
-} from '../src/index';
+} from '../src';
 
 describe('helpers', () => {
   it('should provide default options', () => {
@@ -410,7 +410,7 @@ describe('clear', () => {
   after(done => clear(done));
 });
 
-describe('pubsub', () => {
+describe('pubsub - emit & on', () => {
   beforeEach(done => clear(done));
 
   it('should emit event on default channel', done => {
