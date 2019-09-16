@@ -462,7 +462,9 @@ export const clear = (pattern, done) => {
   const keyPattern = isString(pattern) ? pattern : '';
 
   // TODO use LUA script
-  // const script = "for i, name in ipairs(redis.call('KEYS', 'keyPattern')) do redis.call('DEL', name); end";
+  // const script = "for i, name in
+  // ipairs(redis.call('KEYS', 'keyPattern'))
+  // do redis.call('DEL', name); end";
   // redisClient.eval(script, 0);
 
   // obtain keys
@@ -643,6 +645,26 @@ export const emit = (channel, message, done) => {
   // subscriber, publish message and return
   return redisPublisher.publish(emitChannel, emitMessage, cb);
 };
+
+/**
+ * @function publish
+ * @name publish
+ * @description Posts a message to the given channel
+ * @param {String} channel valid channel name or patterns
+ * @param {Mixed} message valid message to publish
+ * @param {Function} [done] callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * publish('user:click', { time: Date.now() });
+ *
+ */
+export const publish = emit;
 
 /**
  * @function on
