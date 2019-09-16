@@ -1,3 +1,9 @@
+#### 0.3.1 (2019-09-16)
+
+##### Documentation Changes
+
+*  build api docs ([8a1b6aab](https://github.com/lykmapipo/redis-common/commit/8a1b6aab4c234c4128c516dba596151760d46295))
+
 #### 0.3.0 (2019-09-16)
 
 ##### Chores
