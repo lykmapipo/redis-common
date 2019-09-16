@@ -622,7 +622,7 @@ export const emit = (channel, message, done) => {
   const { prefix, eventPrefix, separator } = withDefaults();
 
   // ensure publisher redis client
-  const { publisher: redisPublisher } = createPubSub();
+  const redisPublisher = createPublisher();
 
   // ensure emit channel
   emitChannel = compact([
@@ -671,7 +671,7 @@ export const on = (channel, done) => {
   const { prefix, eventPrefix, separator } = withDefaults();
 
   // ensure subscriber redis client
-  const { subscriber: redisSubscriber } = createPubSub();
+  const redisSubscriber = createSubscriber();
 
   // ensure emit channel
   emitChannel = compact([
