@@ -3,6 +3,7 @@ import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
   createClient,
+  createPublisher,
   createPubSub,
   createClients,
   createMulti,
@@ -50,6 +51,24 @@ describe('helpers', () => {
   it('should not re-create redis client', () => {
     const a = createClient();
     const b = createClient();
+    expect(a.uuid).to.be.equal(b.uuid);
+    expect(a.prefix).to.be.equal(b.prefix);
+  });
+
+  it('should create publisher redis client', () => {
+    expect(createPublisher).to.exist.and.be.a('function');
+
+    const publisher = createPublisher();
+
+    expect(publisher).to.exist;
+    expect(publisher.uuid).to.exist;
+    expect(publisher.prefix).to.exist.and.be.equal('r');
+  });
+
+  it('should not re-create publisher redis client', () => {
+    const a = createPublisher();
+    const b = createPublisher();
+
     expect(a.uuid).to.be.equal(b.uuid);
     expect(a.prefix).to.be.equal(b.prefix);
   });

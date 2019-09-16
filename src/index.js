@@ -90,7 +90,7 @@ export const createClient = optns => {
   // ref client
   let redisClient = client;
 
-  // obtain  or create redis client
+  // obtain or create redis client
   if (recreate || !redisClient) {
     redisClient = redis.createClient(options);
     redisClient.uuid = redisClient.uuid || uuidv1();
@@ -100,6 +100,46 @@ export const createClient = optns => {
 
   // return redis client
   return redisClient;
+};
+
+/**
+ * @function createPublisher
+ * @name createPublisher
+ * @description Create redis publisher client
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new clients
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis publisher clients
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const publisher = createPublisher();
+ *
+ * const publisher = createPublisher({ recreate: true });
+ *
+ */
+export const createPublisher = optns => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref publisher
+  let redisPublisher = publisher;
+
+  // obtain or create redis publisher client
+  if (recreate || !redisPublisher) {
+    redisPublisher = redis.createClient(options);
+    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
+    redisPublisher.prefix = redisPublisher.prefix || prefix;
+    publisher = publisher || redisPublisher;
+  }
+
+  // return pubisher client
+  return redisPublisher;
 };
 
 /**
@@ -128,16 +168,8 @@ export const createPubSub = optns => {
   const { prefix, recreate, ...options } = withDefaults(optns);
 
   // ref clients
-  let redisPublisher = publisher;
+  const redisPublisher = createPublisher(optns);
   let redisSubscriber = subscriber;
-
-  // obtain or create redis publisher client
-  if (recreate || !redisPublisher) {
-    redisPublisher = redis.createClient(options);
-    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
-    redisPublisher.prefix = redisPublisher.prefix || prefix;
-    publisher = publisher || redisPublisher;
-  }
 
   // obtain or create redis subscriber client
   if (recreate || !redisSubscriber) {
