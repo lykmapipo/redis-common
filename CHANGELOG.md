@@ -1,3 +1,9 @@
+#### 0.3.4 (2019-11-15)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([05e59a51](https://github.com/lykmapipo/redis-common/commit/05e59a511f2cfea746d5631aabe0514c09074c5e))
+
 #### 0.3.3 (2019-10-22)
 
 ##### Chores
