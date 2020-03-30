@@ -46,7 +46,7 @@ let subscriber;
  * // => { url: ...}
  *
  */
-export const withDefaults = optns => {
+export const withDefaults = (optns) => {
   // defaults
   const defaults = {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
@@ -83,7 +83,7 @@ export const withDefaults = optns => {
  * const client = createClient({ recreate: true });
  *
  */
-export const createClient = optns => {
+export const createClient = (optns) => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -123,7 +123,7 @@ export const createClient = optns => {
  * const publisher = createPublisher({ recreate: true });
  *
  */
-export const createPublisher = optns => {
+export const createPublisher = (optns) => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -163,7 +163,7 @@ export const createPublisher = optns => {
  * const subscriber = createSubscriber({ recreate: true });
  *
  */
-export const createSubscriber = optns => {
+export const createSubscriber = (optns) => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -203,7 +203,7 @@ export const createSubscriber = optns => {
  * const { publisher, subscriber } = createPubSub({ recreate: true });
  *
  */
-export const createPubSub = optns => {
+export const createPubSub = (optns) => {
   // ref clients
   const redisPublisher = createPublisher(optns);
   const redisSubscriber = createSubscriber(optns);
@@ -231,7 +231,7 @@ export const createPubSub = optns => {
  * const { client, publisher, subscriber } = createClients({ new: true });
  *
  */
-export const createClients = optns => {
+export const createClients = (optns) => {
   // create and return clients
   return { client: createClient(optns), ...createPubSub(optns) };
 };
@@ -352,7 +352,7 @@ export const set = (key, value, expiry, time, strategy, done) => {
   next = isFunction(time) ? time : next;
   next = isFunction(strategy) ? strategy : next;
   next = isFunction(done) ? done : next;
-  const cb = error => next(error, value, setKey);
+  const cb = (error) => next(error, value, setKey);
 
   // set value and return
   const args = compact([setKey, setValue, setExpiry, setTime, setStrategy, cb]);
@@ -478,7 +478,7 @@ export const clear = (pattern, done) => {
     const redisClient = createMulti();
 
     // queue commands
-    forEach(foundKeys, foundKey => redisClient.del(foundKey));
+    forEach(foundKeys, (foundKey) => redisClient.del(foundKey));
 
     // execute commands
     return redisClient.exec(cb);
@@ -501,7 +501,7 @@ export const clear = (pattern, done) => {
  * info((error, info) => { ... });
  *
  */
-export const info = done => {
+export const info = (done) => {
   // ensure client
   const redisClient = createClient();
 
@@ -545,7 +545,7 @@ export const count = (...patterns) => {
   const redisClient = createMulti();
 
   // count for each key pattern
-  forEach(keyPatterns, keyPattern => {
+  forEach(keyPatterns, (keyPattern) => {
     // prepare count LUA script per pattern
     const script = `return #redis.pcall("keys", "${keyPattern}")`;
     // count using a lua script
@@ -577,7 +577,7 @@ export const quit = () => {
   // quit all clients
   // TODO client.end if callback passed
   const clients = [publisher, subscriber, client];
-  forEach(clients, redisClient => {
+  forEach(clients, (redisClient) => {
     // clear subscriptions and listeners
     redisClient.unsubscribe();
     redisClient.removeAllListeners();

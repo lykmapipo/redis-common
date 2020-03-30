@@ -1,3 +1,9 @@
+#### 0.3.13 (2020-03-30)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([90c66561](https://github.com/lykmapipo/redis-common/commit/90c665615052de93eaaa96f675f9b3d388ca26ff))
+
 #### 0.3.12 (2020-03-06)
 
 ##### Chores

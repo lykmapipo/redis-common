@@ -155,7 +155,7 @@ describe('helpers', () => {
     );
   });
 
-  it('should get keys without pattern', done => {
+  it('should get keys without pattern', (done) => {
     expect(keys).to.exist.and.be.a('function');
 
     keys((error, foundKeys) => {
@@ -164,7 +164,7 @@ describe('helpers', () => {
     });
   });
 
-  it('should get keys with given pattern', done => {
+  it('should get keys with given pattern', (done) => {
     expect(keys).to.exist.and.be.a('function');
 
     keys('users', (error, foundKeys) => {
@@ -173,7 +173,7 @@ describe('helpers', () => {
     });
   });
 
-  it('should get keys with given pattern', done => {
+  it('should get keys with given pattern', (done) => {
     expect(keys).to.exist.and.be.a('function');
 
     keys('users:abc:likes', (error, foundKeys) => {
@@ -182,7 +182,7 @@ describe('helpers', () => {
     });
   });
 
-  it('should obtain redis server info', done => {
+  it('should obtain redis server info', (done) => {
     info((error, serverInfo) => {
       expect(error).to.not.exist;
       expect(serverInfo).to.exist;
@@ -207,9 +207,9 @@ describe('helpers', () => {
 });
 
 describe('set', () => {
-  before(done => clear(done));
+  before((done) => clear(done));
 
-  it('should not set with no key and value', done => {
+  it('should not set with no key and value', (done) => {
     set((error, result) => {
       expect(error).to.not.exist;
       expect(result).to.not.exist;
@@ -217,7 +217,7 @@ describe('set', () => {
     });
   });
 
-  it('should not set with not value', done => {
+  it('should not set with not value', (done) => {
     const key = faker.random.uuid();
 
     set(key, (error, result) => {
@@ -227,7 +227,7 @@ describe('set', () => {
     });
   });
 
-  it('should set string', done => {
+  it('should set string', (done) => {
     const key = faker.random.uuid();
     const value = faker.random.word();
 
@@ -239,7 +239,7 @@ describe('set', () => {
     });
   });
 
-  it('should set number', done => {
+  it('should set number', (done) => {
     const key = faker.random.uuid();
     const value = faker.random.number();
 
@@ -251,7 +251,7 @@ describe('set', () => {
     });
   });
 
-  it('should set array', done => {
+  it('should set array', (done) => {
     const key = faker.random.uuid();
     const value = [faker.random.word(), faker.random.word()];
 
@@ -263,7 +263,7 @@ describe('set', () => {
     });
   });
 
-  it('should set plain object', done => {
+  it('should set plain object', (done) => {
     const key = faker.random.uuid();
     const value = faker.helpers.createTransaction();
 
@@ -275,7 +275,7 @@ describe('set', () => {
     });
   });
 
-  it('should set expiry', done => {
+  it('should set expiry', (done) => {
     const key = faker.random.uuid();
     const value = faker.random.word();
 
@@ -287,7 +287,7 @@ describe('set', () => {
     });
   });
 
-  it('should set save strategy', done => {
+  it('should set save strategy', (done) => {
     const key = faker.random.uuid();
     const value = faker.random.word();
 
@@ -299,11 +299,11 @@ describe('set', () => {
     });
   });
 
-  after(done => clear(done));
+  after((done) => clear(done));
 });
 
 describe('get', () => {
-  before(done => clear(done));
+  before((done) => clear(done));
 
   const keyString = faker.random.uuid();
   const string = faker.random.word();
@@ -317,12 +317,12 @@ describe('get', () => {
   const keyObject = faker.random.uuid();
   const object = _.omit(faker.helpers.createTransaction(), 'date');
 
-  before(done => set(keyString, string, done));
-  before(done => set(keyNumber, number, done));
-  before(done => set(keyArray, array, done));
-  before(done => set(keyObject, object, done));
+  before((done) => set(keyString, string, done));
+  before((done) => set(keyNumber, number, done));
+  before((done) => set(keyArray, array, done));
+  before((done) => set(keyObject, object, done));
 
-  it('should return', done => {
+  it('should return', (done) => {
     get((error, result) => {
       expect(error).to.not.exist;
       expect(result).to.not.exist;
@@ -330,7 +330,7 @@ describe('get', () => {
     });
   });
 
-  it('should get string', done => {
+  it('should get string', (done) => {
     get(keyString, (error, result) => {
       expect(error).to.not.exist;
       expect(result).to.exist;
@@ -339,7 +339,7 @@ describe('get', () => {
     });
   });
 
-  it('should get number', done => {
+  it('should get number', (done) => {
     get(keyNumber, (error, result) => {
       expect(error).to.not.exist;
       expect(result).to.exist;
@@ -348,7 +348,7 @@ describe('get', () => {
     });
   });
 
-  it('should get array', done => {
+  it('should get array', (done) => {
     get(keyArray, (error, result) => {
       expect(error).to.not.exist;
       expect(result).to.exist;
@@ -357,7 +357,7 @@ describe('get', () => {
     });
   });
 
-  it('should get plain object', done => {
+  it('should get plain object', (done) => {
     get(keyObject, (error, result) => {
       expect(error).to.not.exist;
       expect(result).to.exist;
@@ -366,21 +366,17 @@ describe('get', () => {
     });
   });
 
-  after(done => clear(done));
+  after((done) => clear(done));
 });
 
 describe('count', () => {
-  beforeEach(done => clear(done));
+  beforeEach((done) => clear(done));
 
-  before(done => {
-    createMulti()
-      .set('abc:1', 1)
-      .set('abc:2', 2)
-      .set('abc:3', 3)
-      .exec(done);
+  before((done) => {
+    createMulti().set('abc:1', 1).set('abc:2', 2).set('abc:3', 3).exec(done);
   });
 
-  it('should be able to count size of keys of specifed pattern', done => {
+  it('should be able to count size of keys of specifed pattern', (done) => {
     count('abc:*', (error, keyCount) => {
       expect(error).to.not.exist;
       expect(keyCount).to.exist;
@@ -389,7 +385,7 @@ describe('count', () => {
     });
   });
 
-  it('should be able to count size of keys of specifed patterns', done => {
+  it('should be able to count size of keys of specifed patterns', (done) => {
     count('abc:*', 'xx:*', (error, keyCounts) => {
       expect(error).to.not.exist;
       expect(keyCounts).to.exist;
@@ -400,18 +396,18 @@ describe('count', () => {
     });
   });
 
-  after(done => clear(done));
+  after((done) => clear(done));
 });
 
 describe('clear', () => {
-  beforeEach(done => clear(done));
+  beforeEach((done) => clear(done));
 
-  it('should clear all data', done => {
+  it('should clear all data', (done) => {
     clear((error, cleared) => {
       expect(error).to.not.exist;
       done(error, cleared);
     });
   });
 
-  after(done => clear(done));
+  after((done) => clear(done));
 });
