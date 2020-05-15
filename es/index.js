@@ -1,7 +1,7 @@
 import { isEmpty, isFunction, isString, isNumber, forEach, last, initial, first, noop } from 'lodash';
 import { compact, mergeObjects, stringify, uniq, isNotValue, parse } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
-import uuidv1 from 'uuid/v1';
+import { v1 } from 'uuid';
 import redis from 'redis';
 
 // local refs
@@ -29,7 +29,7 @@ let subscriber;
  * // => { url: ...}
  *
  */
-const withDefaults = optns => {
+const withDefaults = (optns) => {
   // defaults
   const defaults = {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
@@ -66,7 +66,7 @@ const withDefaults = optns => {
  * const client = createClient({ recreate: true });
  *
  */
-const createClient = optns => {
+const createClient = (optns) => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -76,7 +76,7 @@ const createClient = optns => {
   // obtain or create redis client
   if (recreate || !redisClient) {
     redisClient = redis.createClient(options);
-    redisClient.uuid = redisClient.uuid || uuidv1();
+    redisClient.uuid = redisClient.uuid || v1();
     redisClient.prefix = redisClient.prefix || prefix;
     client = client || redisClient;
   }
@@ -106,7 +106,7 @@ const createClient = optns => {
  * const publisher = createPublisher({ recreate: true });
  *
  */
-const createPublisher = optns => {
+const createPublisher = (optns) => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -116,7 +116,7 @@ const createPublisher = optns => {
   // obtain or create redis publisher client
   if (recreate || !redisPublisher) {
     redisPublisher = redis.createClient(options);
-    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
+    redisPublisher.uuid = redisPublisher.uuid || v1();
     redisPublisher.prefix = redisPublisher.prefix || prefix;
     publisher = publisher || redisPublisher;
   }
@@ -146,7 +146,7 @@ const createPublisher = optns => {
  * const subscriber = createSubscriber({ recreate: true });
  *
  */
-const createSubscriber = optns => {
+const createSubscriber = (optns) => {
   // obtain options
   const { prefix, recreate, ...options } = withDefaults(optns);
 
@@ -156,7 +156,7 @@ const createSubscriber = optns => {
   // obtain or create redis subscriber client
   if (recreate || !redisSubscriber) {
     redisSubscriber = redis.createClient(options);
-    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
+    redisSubscriber.uuid = redisSubscriber.uuid || v1();
     redisSubscriber.prefix = redisSubscriber.prefix || prefix;
     subscriber = subscriber || redisSubscriber;
   }
@@ -186,7 +186,7 @@ const createSubscriber = optns => {
  * const { publisher, subscriber } = createPubSub({ recreate: true });
  *
  */
-const createPubSub = optns => {
+const createPubSub = (optns) => {
   // ref clients
   const redisPublisher = createPublisher(optns);
   const redisSubscriber = createSubscriber(optns);
@@ -214,7 +214,7 @@ const createPubSub = optns => {
  * const { client, publisher, subscriber } = createClients({ new: true });
  *
  */
-const createClients = optns => {
+const createClients = (optns) => {
   // create and return clients
   return { client: createClient(optns), ...createPubSub(optns) };
 };
@@ -273,7 +273,7 @@ const keyFor = (...args) => {
 
   // collect key parts
   let parts = compact([].concat(...args));
-  parts = !isEmpty(parts) ? parts : [uuidv1()];
+  parts = !isEmpty(parts) ? parts : [v1()];
 
   // prepare key
   const storageKey = compact([prefix, ...parts]).join(separator);
@@ -335,7 +335,7 @@ const set = (key, value, expiry, time, strategy, done) => {
   next = isFunction(time) ? time : next;
   next = isFunction(strategy) ? strategy : next;
   next = isFunction(done) ? done : next;
-  const cb = error => next(error, value, setKey);
+  const cb = (error) => next(error, value, setKey);
 
   // set value and return
   const args = compact([setKey, setValue, setExpiry, setTime, setStrategy, cb]);
@@ -461,7 +461,7 @@ const clear = (pattern, done) => {
     const redisClient = createMulti();
 
     // queue commands
-    forEach(foundKeys, foundKey => redisClient.del(foundKey));
+    forEach(foundKeys, (foundKey) => redisClient.del(foundKey));
 
     // execute commands
     return redisClient.exec(cb);
@@ -484,7 +484,7 @@ const clear = (pattern, done) => {
  * info((error, info) => { ... });
  *
  */
-const info = done => {
+const info = (done) => {
   // ensure client
   const redisClient = createClient();
 
@@ -528,7 +528,7 @@ const count = (...patterns) => {
   const redisClient = createMulti();
 
   // count for each key pattern
-  forEach(keyPatterns, keyPattern => {
+  forEach(keyPatterns, (keyPattern) => {
     // prepare count LUA script per pattern
     const script = `return #redis.pcall("keys", "${keyPattern}")`;
     // count using a lua script
@@ -560,7 +560,7 @@ const quit = () => {
   // quit all clients
   // TODO client.end if callback passed
   const clients = [publisher, subscriber, client];
-  forEach(clients, redisClient => {
+  forEach(clients, (redisClient) => {
     // clear subscriptions and listeners
     redisClient.unsubscribe();
     redisClient.removeAllListeners();

@@ -81,9 +81,7 @@
   "dependencies": {
     "@lykmapipo/common": ">=0.33.3",
     "@lykmapipo/env": ">=0.17.6",
-    "flat": ">=5.0.0",
     "lodash": ">=4.17.15",
-    "node": "^14.2.0",
     "redis": ">=3.0.2",
     "uuid": ">=8.0.0"
   },
