@@ -1,3 +1,13 @@
+#### 0.4.0 (2020-05-15)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([4974d6bb](https://github.com/lykmapipo/redis-common/commit/4974d6bb4f0b85f41f816b7e73a0f44693a33940))
+
+##### Bug Fixes
+
+*  use latest uuid api ([34c389dc](https://github.com/lykmapipo/redis-common/commit/34c389dc8a6b98bb252a0c6fedab25dca4865ede))
+
 #### 0.3.18 (2020-05-14)
 
 ##### Chores
