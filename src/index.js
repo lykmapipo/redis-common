@@ -18,7 +18,7 @@ import {
   uniq,
 } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
-import uuidv1 from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 import redis from 'redis';
 
 // local refs
