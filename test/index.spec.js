@@ -28,6 +28,7 @@ describe('helpers', () => {
     expect(options.url).to.exist.and.be.equal('redis://127.0.0.1:6379');
     expect(options.prefix).to.exist.and.be.equal('r');
     expect(options.separator).to.exist.and.be.equal(':');
+    expect(options.lockTTL).to.exist.and.be.equal(1000);
   });
 
   it('should create redis client', () => {

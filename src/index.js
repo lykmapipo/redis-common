@@ -18,7 +18,7 @@ import {
   uniq,
   uuidv1,
 } from '@lykmapipo/common';
-import { getString } from '@lykmapipo/env';
+import { getNumber, getString } from '@lykmapipo/env';
 import redis from 'redis';
 
 // local refs
@@ -32,6 +32,11 @@ let locker;
  * @name withDefaults
  * @description Merge provided options with defaults.
  * @param {Object} [optns] provided options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {String} [optns.prefix='r'] valid redis key prefix
+ * @param {String} [optns.separator=':'] valid redis key separator
+ * @param {String} [optns.eventPrefix='events'] valid redis events key prefix
+ * @param {Number} [optns.lockTTL=1000] valid redis ttl in milliseconds
  * @return {Object} merged options
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
@@ -41,7 +46,7 @@ let locker;
  * @public
  * @example
  *
- * const optns = { port: 6379, host: '127.0.0.1', url: process.env.REDIS_URL };
+ * const optns = { url: process.env.REDIS_URL, prefix: 'r', ... };
  * const options = withDefaults(optns);
  *
  * // => { url: ...}
@@ -54,6 +59,7 @@ export const withDefaults = (optns) => {
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
     eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),
+    lockTTL: getNumber('REDIS_LOCK_TTL', 1000),
   };
 
   // merge and compact with defaults
