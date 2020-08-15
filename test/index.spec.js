@@ -148,6 +148,12 @@ describe('helpers', () => {
     expect(warlocker).to.exist;
     expect(warlocker.uuid).to.exist;
     expect(warlocker.prefix).to.exist.and.be.equal('r');
+
+    expect(warlocker.makeKey).to.be.a('function');
+    expect(warlocker.makeKey('expiry')).to.be.equal('r:locks:expiry:lock');
+    expect(warlocker.makeKey('scheduler:expiry')).to.be.equal(
+      'r:locks:scheduler:expiry:lock'
+    );
   });
 
   it('should not re-create warlock redis instance', () => {
@@ -161,7 +167,13 @@ describe('helpers', () => {
   it('should create redis clients', () => {
     expect(createClients).to.exist.and.be.a('function');
 
-    const { client, locker, publisher, subscriber } = createClients();
+    const {
+      client,
+      locker,
+      warlocker,
+      publisher,
+      subscriber,
+    } = createClients();
 
     expect(client).to.exist;
     expect(client.uuid).to.exist;
@@ -170,6 +182,10 @@ describe('helpers', () => {
     expect(locker).to.exist;
     expect(locker.uuid).to.exist;
     expect(locker.prefix).to.exist.and.be.equal('r');
+
+    expect(warlocker).to.exist;
+    expect(warlocker.uuid).to.exist;
+    expect(warlocker.prefix).to.exist.and.be.equal('r');
 
     expect(publisher).to.exist;
     expect(publisher.uuid).to.exist;
@@ -238,16 +254,24 @@ describe('helpers', () => {
   it('should quit all redis clients', () => {
     expect(quit).to.exist.and.be.a('function');
 
-    const { client, locker, publisher, subscriber } = createClients();
+    const {
+      client,
+      locker,
+      warlocker,
+      publisher,
+      subscriber,
+    } = createClients();
 
     expect(client).to.exist;
     expect(locker).to.exist;
+    expect(warlocker).to.exist;
     expect(publisher).to.exist;
     expect(subscriber).to.exist;
 
     const quited = quit();
     expect(quited.client).to.not.exist;
     expect(quited.locker).to.not.exist;
+    expect(quited.warlocker).to.not.exist;
     expect(quited.publisher).to.not.exist;
     expect(quited.subscriber).to.not.exist;
   });

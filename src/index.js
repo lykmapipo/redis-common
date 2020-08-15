@@ -73,6 +73,41 @@ export const withDefaults = (optns) => {
 };
 
 /**
+ * @function keyFor
+ * @name keyFor
+ * @description Generate data storage key
+ * @param {...String|String} args valid key parts
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * keyFor('users');
+ * // => 'r:users';
+ *
+ * keyFor('users', 'likes');
+ * // => 'r:users:likes'
+ *
+ */
+export const keyFor = (...args) => {
+  // obtain options
+  const { prefix, separator } = withDefaults();
+
+  // collect key parts
+  let parts = compact([].concat(...args));
+  parts = !isEmpty(parts) ? parts : [uuidv1()];
+
+  // prepare key
+  const storageKey = compact([prefix, ...parts]).join(separator);
+
+  // return storage key
+  return storageKey;
+};
+
+/**
  * @function createClient
  * @name createClient
  * @description Create redis client or return existing one
@@ -178,7 +213,7 @@ export const createLocker = (optns) => {
  */
 export const createWarlock = (optns) => {
   // obtain options
-  const { recreate } = withDefaults(optns);
+  const { recreate, lockPrefix } = withDefaults(optns);
 
   // ref warlocker
   let redisWarlocker = warlocker;
@@ -189,7 +224,10 @@ export const createWarlock = (optns) => {
     redisWarlocker = warlock(redisLocker);
     redisWarlocker.uuid = redisLocker.uuid;
     redisWarlocker.prefix = redisLocker.prefix;
-    // redisWarlocker.makeKey = (key) => {};
+
+    // override: internal warlock key generator
+    redisWarlocker.makeKey = (key) => keyFor(lockPrefix, key, 'lock');
+
     warlocker = warlocker || redisWarlocker;
   }
 
@@ -337,6 +375,7 @@ export const createClients = (optns) => {
   return {
     client: createClient(optns), // normal client
     locker: createLocker(optns), // lock client
+    warlocker: createWarlock(optns), // warlock instance
     ...createPubSub(optns), // pubsub clients
   };
 };
@@ -367,41 +406,6 @@ export const createMulti = () => {
 
   // return multi command object
   return redisMulti;
-};
-
-/**
- * @function keyFor
- * @name keyFor
- * @description Generate data storage key
- * @param {...String|String} args valid key parts
- * @author lally elias <lallyelias87@gmail.com>
- * @license MIT
- * @since 0.1.0
- * @version 0.1.0
- * @static
- * @public
- * @example
- *
- * keyFor('users');
- * // => 'r:users';
- *
- * keyFor('users', 'likes');
- * // => 'r:users:likes'
- *
- */
-export const keyFor = (...args) => {
-  // obtain options
-  const { prefix, separator } = withDefaults();
-
-  // collect key parts
-  let parts = compact([].concat(...args));
-  parts = !isEmpty(parts) ? parts : [uuidv1()];
-
-  // prepare key
-  const storageKey = compact([prefix, ...parts]).join(separator);
-
-  // return storage key
-  return storageKey;
 };
 
 /**
@@ -911,4 +915,4 @@ export const unsubscribe = (channel, done) => {
  * lock({key: 'scheduler:work' }, (error, unlock) => { ... });
  *
  */
-export const lock = () => {};
+// export const lock = (key, ttl, done) => {};
