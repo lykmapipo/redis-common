@@ -4,6 +4,7 @@ import {
   withDefaults,
   createClient,
   createLocker,
+  createWarlock,
   createPublisher,
   createSubscriber,
   createPubSub,
@@ -134,6 +135,24 @@ describe('helpers', () => {
   it('should not re-create lock redis client', () => {
     const a = createLocker();
     const b = createLocker();
+
+    expect(a.uuid).to.be.equal(b.uuid);
+    expect(a.prefix).to.be.equal(b.prefix);
+  });
+
+  it('should create warlock redis instance', () => {
+    expect(createWarlock).to.exist.and.be.a('function');
+
+    const warlocker = createWarlock();
+
+    expect(warlocker).to.exist;
+    expect(warlocker.uuid).to.exist;
+    expect(warlocker.prefix).to.exist.and.be.equal('r');
+  });
+
+  it('should not re-create warlock redis instance', () => {
+    const a = createWarlock();
+    const b = createWarlock();
 
     expect(a.uuid).to.be.equal(b.uuid);
     expect(a.prefix).to.be.equal(b.prefix);

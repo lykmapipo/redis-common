@@ -20,12 +20,14 @@ import {
 } from '@lykmapipo/common';
 import { getNumber, getString } from '@lykmapipo/env';
 import redis from 'redis';
+import warlock from 'node-redis-warlock';
 
 // local refs
-let client;
-let publisher;
-let subscriber;
-let locker;
+let client; // command client
+let publisher; // publisher client
+let subscriber; // subscriber client
+let locker; // lock client
+let warlocker; // warlock instance
 
 /**
  * @function withDefaults
@@ -75,6 +77,7 @@ export const withDefaults = (optns) => {
  * @name createClient
  * @description Create redis client or return existing one
  * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
  * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis client
@@ -115,12 +118,13 @@ export const createClient = (optns) => {
  * @name createLocker
  * @description Create redis lock client
  * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
  * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis lock client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
- * @since 0.11.0
+ * @since 0.5.0
  * @version 0.1.0
  * @static
  * @public
@@ -151,10 +155,54 @@ export const createLocker = (optns) => {
 };
 
 /**
+ * @function createWarlock
+ * @name createWarlock
+ * @description Create redis warlock instance
+ * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis warlock instance
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.5.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const warlocker = createWarlock();
+ *
+ * const warlocker = createWarlock({ recreate: true });
+ *
+ */
+export const createWarlock = (optns) => {
+  // obtain options
+  const { recreate } = withDefaults(optns);
+
+  // ref warlocker
+  let redisWarlocker = warlocker;
+
+  // obtain or create redis warlock instance
+  if (recreate || !redisWarlocker) {
+    const redisLocker = createLocker(optns);
+    redisWarlocker = warlock(redisLocker);
+    redisWarlocker.uuid = redisLocker.uuid;
+    redisWarlocker.prefix = redisLocker.prefix;
+    // redisWarlocker.makeKey = (key) => {};
+    warlocker = warlocker || redisWarlocker;
+  }
+
+  // return warlocker client
+  return redisWarlocker;
+};
+
+/**
  * @function createPublisher
  * @name createPublisher
  * @description Create redis publisher client
  * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
  * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis publisher client
@@ -195,6 +243,7 @@ export const createPublisher = (optns) => {
  * @name createSubscriber
  * @description Create redis subscriber client
  * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
  * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis subscriber client
@@ -235,6 +284,7 @@ export const createSubscriber = (optns) => {
  * @name createPubSub
  * @description Create redis pubsub clients
  * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
  * @param {Boolean} [optns.recreate=false] whether to create new clients
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis pubsub clients
@@ -265,6 +315,9 @@ export const createPubSub = (optns) => {
  * @name createClients
  * @description Create redis clients
  * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis clients
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
@@ -639,12 +692,13 @@ export const quit = () => {
 
   // reset clients
   client = null;
+  warlocker = null;
   locker = null;
   publisher = null;
   subscriber = null;
 
   // return redis client states
-  return { client, locker, publisher, subscriber };
+  return { client, locker, warlocker, publisher, subscriber };
 };
 
 /**
@@ -835,3 +889,26 @@ export const unsubscribe = (channel, done) => {
   // unsubscribe for events
   return subscriber.unsubscribe(emitChannel, cb);
 };
+
+/**
+ * @function lock
+ * @name lock
+ * @description Set lock
+ * @param {Object} optns valid options
+ * @param {String} optns.key name for the lock key
+ * @param {Number} optns.ttl time in milliseconds for the lock to live
+ * @param {Function} [done] callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.2.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * lock({ key: 'paymments:pay' }, (error, unlock) => { ... });
+ *
+ * lock({key: 'scheduler:work' }, (error, unlock) => { ... });
+ *
+ */
+export const lock = () => {};
