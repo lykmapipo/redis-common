@@ -16,15 +16,16 @@ import {
   parse,
   stringify,
   uniq,
+  uuidv1,
 } from '@lykmapipo/common';
 import { getString } from '@lykmapipo/env';
-import { v1 as uuidv1 } from 'uuid';
 import redis from 'redis';
 
 // local refs
 let client;
 let publisher;
 let subscriber;
+let locker;
 
 /**
  * @function withDefaults
@@ -100,6 +101,46 @@ export const createClient = (optns) => {
 
   // return redis client
   return redisClient;
+};
+
+/**
+ * @function createLocker
+ * @name createLocker
+ * @description Create redis lock client
+ * @param {Object} optns valid options
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis lock client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.11.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const locker = createLocker();
+ *
+ * const locker = createLocker({ recreate: true });
+ *
+ */
+export const createLocker = (optns) => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref locker
+  let redisLocker = locker;
+
+  // obtain or create redis lock client
+  if (recreate || !redisLocker) {
+    redisLocker = redis.createClient(options);
+    redisLocker.uuid = redisLocker.uuid || uuidv1();
+    redisLocker.prefix = redisLocker.prefix || prefix;
+    locker = locker || redisLocker;
+  }
+
+  // return locker client
+  return redisLocker;
 };
 
 /**
@@ -233,7 +274,11 @@ export const createPubSub = (optns) => {
  */
 export const createClients = (optns) => {
   // create and return clients
-  return { client: createClient(optns), ...createPubSub(optns) };
+  return {
+    client: createClient(optns), // normal client
+    locker: createLocker(optns), // lock client
+    ...createPubSub(optns), // pubsub clients
+  };
 };
 
 /**
@@ -576,7 +621,7 @@ export const count = (...patterns) => {
 export const quit = () => {
   // quit all clients
   // TODO client.end if callback passed
-  const clients = [publisher, subscriber, client];
+  const clients = [publisher, subscriber, locker, client];
   forEach(clients, (redisClient) => {
     // clear subscriptions and listeners
     redisClient.unsubscribe();
@@ -587,11 +632,12 @@ export const quit = () => {
 
   // reset clients
   client = null;
+  locker = null;
   publisher = null;
   subscriber = null;
 
   // return redis client states
-  return { client, publisher, subscriber };
+  return { client, locker, publisher, subscriber };
 };
 
 /**

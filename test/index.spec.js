@@ -3,6 +3,7 @@ import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
   createClient,
+  createLocker,
   createPublisher,
   createSubscriber,
   createPubSub,
@@ -38,7 +39,7 @@ describe('helpers', () => {
     expect(client.prefix).to.exist.and.be.equal('r');
   });
 
-  it('should create redis client with give options', () => {
+  it('should create redis client with given options', () => {
     expect(createClient).to.exist.and.be.a('function');
 
     const client = createClient({ prefix: 're', recreate: true });
@@ -117,14 +118,36 @@ describe('helpers', () => {
     expect(b.prefix).to.be.equal(d.prefix);
   });
 
+  it('should create lock redis client', () => {
+    expect(createLocker).to.exist.and.be.a('function');
+
+    const locker = createLocker();
+
+    expect(locker).to.exist;
+    expect(locker.uuid).to.exist;
+    expect(locker.prefix).to.exist.and.be.equal('r');
+  });
+
+  it('should not re-create lock redis client', () => {
+    const a = createLocker();
+    const b = createLocker();
+
+    expect(a.uuid).to.be.equal(b.uuid);
+    expect(a.prefix).to.be.equal(b.prefix);
+  });
+
   it('should create redis clients', () => {
     expect(createClients).to.exist.and.be.a('function');
 
-    const { client, publisher, subscriber } = createClients();
+    const { client, locker, publisher, subscriber } = createClients();
 
     expect(client).to.exist;
     expect(client.uuid).to.exist;
     expect(client.prefix).to.exist.and.be.equal('r');
+
+    expect(locker).to.exist;
+    expect(locker.uuid).to.exist;
+    expect(locker.prefix).to.exist.and.be.equal('r');
 
     expect(publisher).to.exist;
     expect(publisher.uuid).to.exist;
@@ -193,14 +216,16 @@ describe('helpers', () => {
   it('should quit all redis clients', () => {
     expect(quit).to.exist.and.be.a('function');
 
-    const { client, publisher, subscriber } = createClients();
+    const { client, locker, publisher, subscriber } = createClients();
 
     expect(client).to.exist;
+    expect(locker).to.exist;
     expect(publisher).to.exist;
     expect(subscriber).to.exist;
 
     const quited = quit();
     expect(quited.client).to.not.exist;
+    expect(quited.locker).to.not.exist;
     expect(quited.publisher).to.not.exist;
     expect(quited.subscriber).to.not.exist;
   });
