@@ -27,20 +27,30 @@ npm install --save @lykmapipo/redis-common
 ## Usage
 
 ```js
-import { createClients, emit, on, clear, quit } from '@lykmapipo/redis-common';
+import {
+  set,
+  get,
+  publish,
+  subscribe,
+  lock,
+  quit,
+} from '@lykmapipo/redis-common';
 
-const { client, publisher, subscriber } = createClients();
+set('users:count', 1, (error, value, key) => { ... });
 
-emit('redis:clicks', 1);
+get('users:count', (error, value) => { ... });
 
-on('redis:clicks', (channel, message) => { ... });
+subscribe('redis:clicks', (channel, message) => { ... });
 
-clear('users', error => {});
+publish('redis:clicks', 1);
+
+lock('users', (error, unlock) => { ... });
 
 quit();
 ```
 
 ## Environment
+
 ```js
 REDIS_URL=redis://127.0.0.1:6379
 REDIS_KEY_PREFIX=r

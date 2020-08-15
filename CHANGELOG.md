@@ -1,3 +1,29 @@
+#### 0.5.0 (2020-08-15)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([d38257dd](https://github.com/lykmapipo/redis-common/commit/d38257dd54ca83f5ac3673cb2da8ee9c7d0841d3))
+
+##### Documentation Changes
+
+* **readme:**  update badges ([974f3060](https://github.com/lykmapipo/redis-common/commit/974f30607d95694ddd10138c23eaf31ea5d0211d))
+
+##### New Features
+
+*  add lock helper ([579d0361](https://github.com/lykmapipo/redis-common/commit/579d03611746c7f26bda2a9b069f1f6d934f5e3a))
+*  add warlock create helper ([3970401e](https://github.com/lykmapipo/redis-common/commit/3970401e081a69a11adb10c09409852e8aa85a8e))
+*  add lock key prefix option ([1a1e4647](https://github.com/lykmapipo/redis-common/commit/1a1e4647df077b68c652042288c44843e671b6cc))
+*  allow lock ttl option ([a6ff0841](https://github.com/lykmapipo/redis-common/commit/a6ff08415d6de6f10e5f13a0c2dd8684752c4810))
+*  add createLocker client ([8b6e0951](https://github.com/lykmapipo/redis-common/commit/8b6e095175792c20c48d30eb4650ee2d0ec1c13b))
+
+##### Refactors
+
+*  override warlock#makeKey ([5be78121](https://github.com/lykmapipo/redis-common/commit/5be78121fc38a20acba4c737baa7d9688cd6f817))
+
+##### Tests
+
+*  improve warlock#makeKey case ([07f6faab](https://github.com/lykmapipo/redis-common/commit/07f6faab34a2d299aaa15525f5c09343c6b90cfa))
+
 #### 0.4.10 (2020-08-04)
 
 ##### Chores

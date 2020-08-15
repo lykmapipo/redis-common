@@ -10,6 +10,11 @@ Merge provided options with defaults.
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | provided options | *Optional* |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | valid redis key prefix | *Optional* |
+| optns.separator&#x3D;&#x27;:&#x27; | `String`  | valid redis key separator | *Optional* |
+| optns.eventPrefix&#x3D;&#x27;events&#x27; | `String`  | valid redis events key prefix | *Optional* |
+| optns.lockTTL&#x3D;1000 | `Number`  | valid redis ttl in milliseconds | *Optional* |
 
 
 
@@ -18,7 +23,7 @@ Merge provided options with defaults.
 
 ```javascript
 
-const optns = { port: 6379, host: '127.0.0.1', url: process.env.REDIS_URL };
+const optns = { url: process.env.REDIS_URL, prefix: 'r', ... };
 const options = withDefaults(optns);
 
 // => { url: ...}
@@ -29,6 +34,41 @@ const options = withDefaults(optns);
 
 
 - `Object`  merged options
+
+
+
+#### keyFor(args) 
+
+Generate data storage key
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| args | `String` `String`  | valid key parts | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+keyFor('users');
+// => 'r:users';
+
+keyFor('users', 'likes');
+// => 'r:users:likes'
+```
+
+
+##### Returns
+
+
+- `Void`
 
 
 
@@ -44,6 +84,7 @@ Create redis client or return existing one
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
 | optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
 
@@ -67,6 +108,78 @@ const client = createClient({ recreate: true });
 
 
 
+#### createLocker(optns) 
+
+Create redis lock client
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+const locker = createLocker();
+
+const locker = createLocker({ recreate: true });
+```
+
+
+##### Returns
+
+
+- `Object`  redis lock client
+
+
+
+#### createWarlock(optns) 
+
+Create redis warlock instance
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+const warlocker = createWarlock();
+
+const warlocker = createWarlock({ recreate: true });
+```
+
+
+##### Returns
+
+
+- `Object`  redis warlock instance
+
+
+
 #### createPublisher(optns) 
 
 Create redis publisher client
@@ -79,6 +192,7 @@ Create redis publisher client
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
 | optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
 
@@ -114,6 +228,7 @@ Create redis subscriber client
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
 | optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
 
@@ -149,6 +264,7 @@ Create redis pubsub clients
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
 | optns.recreate&#x3D;false | `Boolean`  | whether to create new clients | *Optional* |
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
 
@@ -184,6 +300,9 @@ Create redis clients
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
 
 
 
@@ -227,41 +346,6 @@ multi.set('abc:1', 1).set('abc:2', 2).set('abc:3', 3).exec(done);
 
 
 - `Object`  redis clients
-
-
-
-#### keyFor(args) 
-
-Generate data storage key
-
-
-
-
-##### Parameters
-
-| Name | Type | Description |  |
-| ---- | ---- | ----------- | -------- |
-| args | `String` `String`  | valid key parts | &nbsp; |
-
-
-
-
-##### Examples
-
-```javascript
-
-keyFor('users');
-// => 'r:users';
-
-keyFor('users', 'likes');
-// => 'r:users:likes'
-```
-
-
-##### Returns
-
-
-- `Void`
 
 
 
@@ -643,6 +727,41 @@ Stop listen for messages published to channels matching the given patterns
 ```javascript
 
 unsubscribe('user:clicks', (channel, count) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### lock(key, ttl[, done]) 
+
+Set lock
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| key | `String`  | name for the lock key | &nbsp; |
+| ttl | `Number`  | time in milliseconds for the lock to live | &nbsp; |
+| done | `Function`  | callback to invoke on success or failure | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+lock('paymments:pay', 1000, (error, unlock) => { ... });
+
+lock('scheduler:work', (error, unlock) => { ... });
 ```
 
 
