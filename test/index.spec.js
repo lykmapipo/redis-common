@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { parallel } from 'async';
 import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
@@ -18,6 +19,7 @@ import {
   info,
   count,
   quit,
+  lock,
 } from '../src';
 
 describe('helpers', () => {
@@ -480,6 +482,55 @@ describe('clear', () => {
     clear((error, cleared) => {
       expect(error).to.not.exist;
       done(error, cleared);
+    });
+  });
+
+  after((done) => clear(done));
+});
+
+describe('warlock', () => {
+  beforeEach((done) => clear(done));
+
+  it('should lock with default ttl', (done) => {
+    lock('schedule:1', (error, unlock) => {
+      expect(error).to.not.exist;
+      expect(unlock).to.exist.and.be.a('function');
+      done(error, unlock);
+    });
+  });
+
+  it('should lock with given ttl', (done) => {
+    lock('schedule:2', 2000, (error, unlock) => {
+      expect(error).to.not.exist;
+      expect(unlock).to.exist.and.be.a('function');
+      done(error, unlock);
+    });
+  });
+
+  it('should thrown if lock already acquired', (done) => {
+    parallel(
+      [(next) => lock('schedule:3', next), (next) => lock('schedule:3', next)],
+      (error /* , unlock */) => {
+        expect(error).to.exist;
+        expect(error.message).to.be.equal('unable to obtain lock');
+        done();
+      }
+    );
+  });
+
+  it('should lock and unlock with default ttl', (done) => {
+    lock('schedule:4', (error, unlock) => {
+      expect(error).to.not.exist;
+      expect(unlock).to.exist.and.be.a('function');
+      unlock(done);
+    });
+  });
+
+  it('should lock and unlock with given ttl', (done) => {
+    lock('schedule:5', 1000, (error, unlock) => {
+      expect(error).to.not.exist;
+      expect(unlock).to.exist.and.be.a('function');
+      unlock(done);
     });
   });
 

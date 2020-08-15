@@ -898,9 +898,8 @@ export const unsubscribe = (channel, done) => {
  * @function lock
  * @name lock
  * @description Set lock
- * @param {Object} optns valid options
- * @param {String} optns.key name for the lock key
- * @param {Number} optns.ttl time in milliseconds for the lock to live
+ * @param {String} key name for the lock key
+ * @param {Number} ttl time in milliseconds for the lock to live
  * @param {Function} [done] callback to invoke on success or failure
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
@@ -910,9 +909,39 @@ export const unsubscribe = (channel, done) => {
  * @public
  * @example
  *
- * lock({ key: 'paymments:pay' }, (error, unlock) => { ... });
+ * lock('paymments:pay', 1000, (error, unlock) => { ... });
  *
- * lock({key: 'scheduler:work' }, (error, unlock) => { ... });
+ * lock('scheduler:work', (error, unlock) => { ... });
  *
  */
-// export const lock = (key, ttl, done) => {};
+export const lock = (key, ttl, done) => {
+  // obtain options
+  const { lockTTL } = withDefaults();
+
+  // normalize arguments
+  const actualKey = key; // TODO: support default
+  const actualTTL = isFunction(ttl) ? lockTTL : ttl;
+  const cb = isFunction(ttl) ? ttl : done || noop;
+
+  // ensure warlock instance
+  const redisWarlocker = createWarlock();
+
+  // prepare wrapped unlock callback
+  const actualCallback = (error, unlock) => {
+    // this process was not able to set a lock
+    if (error) {
+      return cb(error);
+    }
+
+    // lock was not established by this process
+    if (!unlock || !isFunction(unlock)) {
+      return cb(new Error('unable to obtain lock'));
+    }
+
+    // lock is set successfully by this process
+    return cb(null, unlock);
+  };
+
+  // acqure lock
+  return redisWarlocker.lock(actualKey, actualTTL, actualCallback);
+};
