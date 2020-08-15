@@ -151,6 +151,9 @@ describe('helpers', () => {
 
     expect(warlocker.makeKey).to.be.a('function');
     expect(warlocker.makeKey('expiry')).to.be.equal('r:locks:expiry:lock');
+    expect(warlocker.makeKey('schedule:123')).to.be.equal(
+      'r:locks:schedule:123:lock'
+    );
     expect(warlocker.makeKey('scheduler:expiry')).to.be.equal(
       'r:locks:scheduler:expiry:lock'
     );
