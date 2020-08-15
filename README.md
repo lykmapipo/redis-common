@@ -1,16 +1,22 @@
 # redis-common
 
 [![Build Status](https://travis-ci.org/lykmapipo/redis-common.svg?branch=master)](https://travis-ci.org/lykmapipo/redis-common)
-[![Dependencies Status](https://david-dm.org/lykmapipo/redis-common.svg?style=flat-square)](https://david-dm.org/lykmapipo/redis-common)
+[![Dependencies Status](https://david-dm.org/lykmapipo/redis-common.svg)](https://david-dm.org/lykmapipo/redis-common)
 [![Coverage Status](https://coveralls.io/repos/github/lykmapipo/redis-common/badge.svg?branch=master)](https://coveralls.io/github/lykmapipo/redis-common?branch=master)
+[![GitHub License](https://img.shields.io/github/license/lykmapipo/redis-common)](https://github.com/lykmapipo/redis-common/blob/develop/LICENSE)
+
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Code Style](https://badgen.net/badge/code%20style/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript)
+[![npm version](https://img.shields.io/npm/v/@lykmapipo/redis-common)](https://www.npmjs.com/package/@lykmapipo/redis-common)
 
 Re-usable helpers for redis
 
 ## Requirements
 
-- [NodeJS v8.11.1+](https://nodejs.org)
-- [npm v5.6.0+](https://www.npmjs.com/)
-- [Redis 2.8.0+](http://redis.io/)
+- [NodeJS v14.5+](https://nodejs.org)
+- [Npm v6.14+](https://www.npmjs.com/)
+- [Redis v5+](https://redis.io/)
 
 ## Installation
 
