@@ -59,6 +59,7 @@ export const withDefaults = (optns) => {
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
     eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),
+    lockPrefix: getString('REDIS_LOCK_PREFIX', 'locks'),
     lockTTL: getNumber('REDIS_LOCK_TTL', 1000),
   };
 

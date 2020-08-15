@@ -28,6 +28,8 @@ describe('helpers', () => {
     expect(options.url).to.exist.and.be.equal('redis://127.0.0.1:6379');
     expect(options.prefix).to.exist.and.be.equal('r');
     expect(options.separator).to.exist.and.be.equal(':');
+    expect(options.eventPrefix).to.exist.and.be.equal('events');
+    expect(options.lockPrefix).to.exist.and.be.equal('locks');
     expect(options.lockTTL).to.exist.and.be.equal(1000);
   });
 
