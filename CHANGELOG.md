@@ -1,3 +1,19 @@
+#### 0.6.0 (2020-08-18)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([277f8e0f](https://github.com/lykmapipo/redis-common/commit/277f8e0fd9f0b7798eed7f0e4b4bfb1d561e3d41))
+
+##### New Features
+
+*  add config helper ([d3c6c984](https://github.com/lykmapipo/redis-common/commit/d3c6c9841e0be89f60b17043c426fa0808e36485))
+*  add cli client ([0883e0c6](https://github.com/lykmapipo/redis-common/commit/0883e0c6abfa24b2cf707acb417c58992efc3661))
+
+##### Refactors
+
+*  add client create & quit factories ([83883afd](https://github.com/lykmapipo/redis-common/commit/83883afd4759934d4fa1ec7c6d9779d5929a19d9))
+*  re-organize exports ([841f69d9](https://github.com/lykmapipo/redis-common/commit/841f69d93c56742250044d77c869f047618f243e))
+
 #### 0.5.0 (2020-08-15)
 
 ##### Chores

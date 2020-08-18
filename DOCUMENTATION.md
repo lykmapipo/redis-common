@@ -14,7 +14,7 @@ Merge provided options with defaults.
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | valid redis key prefix | *Optional* |
 | optns.separator&#x3D;&#x27;:&#x27; | `String`  | valid redis key separator | *Optional* |
 | optns.eventPrefix&#x3D;&#x27;events&#x27; | `String`  | valid redis events key prefix | *Optional* |
-| optns.lockTTL&#x3D;1000 | `Number`  | valid redis ttl in milliseconds | *Optional* |
+| optns.lockTtl&#x3D;1000 | `Number`  | valid redis ttl in milliseconds | *Optional* |
 
 
 
@@ -34,6 +34,71 @@ const options = withDefaults(optns);
 
 
 - `Object`  merged options
+
+
+
+#### createRedisClient(optns) 
+
+Create redis client
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+const client = createRedisClient();
+```
+
+
+##### Returns
+
+
+- `Object`  redis client
+
+
+
+#### quitRedisClient(redisClient) 
+
+Quit given redis client
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| redisClient | `Object`  | Valid redis client instance | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+quitRedisClient(client);
+```
+
+
+##### Returns
+
+
+- `Void`
 
 
 
@@ -98,6 +163,42 @@ Create redis client or return existing one
 const client = createClient();
 
 const client = createClient({ recreate: true });
+```
+
+
+##### Returns
+
+
+- `Object`  redis client
+
+
+
+#### createCli(optns) 
+
+Create redis cli client or return existing one
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| optns | `Object`  | valid options | &nbsp; |
+| optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
+| optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
+
+
+
+
+##### Examples
+
+```javascript
+
+const cli = createCli();
+
+const cli = createCli({ recreate: true });
 ```
 
 
@@ -454,39 +555,6 @@ keys('users', (error, keys) => { ... });
 
 
 
-#### clear(done) 
-
-Clear all data saved and their key
-
-
-
-
-##### Parameters
-
-| Name | Type | Description |  |
-| ---- | ---- | ----------- | -------- |
-| done | `Function`  | callback to invoke on success or failure | &nbsp; |
-
-
-
-
-##### Examples
-
-```javascript
-
-clear(error => { ... });
-
-clear('users', error => { ... });
-```
-
-
-##### Returns
-
-
-- `Void`
-
-
-
 #### info(done) 
 
 Collect information and statistics about the server
@@ -541,6 +609,75 @@ Count the number of keys that match specified pattern
 
 count('users', (error, counts) => { ... });
 count('users:sessions*', 'users:visits*', (error, counts) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### config(params, done) 
+
+Read or reconfigure redis server at run time
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| params |  | Valid config params | &nbsp; |
+| done | `Function`  | callback to invoke on success or failure | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+config('SET', 'notify-keyspace-events', 'Ex');
+config('SET', 'notify-keyspace-events', 'Ex', (error, results) => { ... });
+
+config('GET', 'notify-keyspace-events');
+config('GET', 'notify-keyspace-events', (error, results) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### clear(done) 
+
+Clear all data saved and their key
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| done | `Function`  | callback to invoke on success or failure | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+clear(error => { ... });
+
+clear('users', error => { ... });
 ```
 
 
