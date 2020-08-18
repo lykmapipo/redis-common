@@ -593,53 +593,6 @@ export const keys = (pattern, done) => {
 };
 
 /**
- * @function clear
- * @name clear
- * @description Clear all data saved and their key
- * @param {Function} done callback to invoke on success or failure
- * @author lally elias <lallyelias87@gmail.com>
- * @license MIT
- * @since 0.1.0
- * @version 0.1.0
- * @static
- * @public
- * @example
- *
- * clear(error => { ... });
- *
- * clear('users', error => { ... });
- *
- */
-export const clear = (pattern, done) => {
-  // normalize arguments
-  const cb = isFunction(pattern) ? pattern : done;
-  const keyPattern = isString(pattern) ? pattern : '';
-
-  // TODO use LUA script
-  // const script = "for i, name in
-  // ipairs(redis.call('KEYS', 'keyPattern'))
-  // do redis.call('DEL', name); end";
-  // redisClient.eval(script, 0);
-
-  // obtain keys
-  keys(keyPattern, (error, foundKeys) => {
-    // back-off in case there is error
-    if (error) {
-      return cb(error);
-    }
-
-    // initiate multi to run all commands atomically
-    const redisClient = createMulti();
-
-    // queue commands
-    forEach(foundKeys, (foundKey) => redisClient.del(foundKey));
-
-    // execute commands
-    return redisClient.exec(cb);
-  });
-};
-
-/**
  * @function info
  * @name info
  * @description Collect information and statistics about the server
@@ -713,8 +666,8 @@ export const count = (...patterns) => {
 };
 
 /**
- * @function info
- * @name info
+ * @function config
+ * @name config
  * @description Read or reconfigure redis server at run time
  * @param {*} params Valid config params
  * @param {Function} done callback to invoke on success or failure
@@ -745,6 +698,53 @@ export const config = (...params) => {
 
   // fetch keys
   return redisClient.config(...[...args, cb]);
+};
+
+/**
+ * @function clear
+ * @name clear
+ * @description Clear all data saved and their key
+ * @param {Function} done callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * clear(error => { ... });
+ *
+ * clear('users', error => { ... });
+ *
+ */
+export const clear = (pattern, done) => {
+  // normalize arguments
+  const cb = isFunction(pattern) ? pattern : done;
+  const keyPattern = isString(pattern) ? pattern : '';
+
+  // TODO use LUA script
+  // const script = "for i, name in
+  // ipairs(redis.call('KEYS', 'keyPattern'))
+  // do redis.call('DEL', name); end";
+  // redisClient.eval(script, 0);
+
+  // obtain keys
+  keys(keyPattern, (error, foundKeys) => {
+    // back-off in case there is error
+    if (error) {
+      return cb(error);
+    }
+
+    // initiate multi to run all commands atomically
+    const redisClient = createMulti();
+
+    // queue commands
+    forEach(foundKeys, (foundKey) => redisClient.del(foundKey));
+
+    // execute commands
+    return redisClient.exec(cb);
+  });
 };
 
 /**
