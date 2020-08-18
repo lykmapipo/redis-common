@@ -24,6 +24,7 @@ import warlock from 'node-redis-warlock';
 
 // local refs
 let client; // command client
+let cli; // cli client
 let publisher; // publisher client
 let subscriber; // subscriber client
 let locker; // lock client
@@ -146,6 +147,47 @@ export const createClient = (optns) => {
 
   // return redis client
   return redisClient;
+};
+
+/**
+ * @function createCli
+ * @name createCli
+ * @description Create redis cli client or return existing one
+ * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.6.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const cli = createCli();
+ *
+ * const cli = createCli({ recreate: true });
+ *
+ */
+export const createCli = (optns) => {
+  // obtain options
+  const { prefix, recreate, ...options } = withDefaults(optns);
+
+  // ref cli client
+  let redisCli = cli;
+
+  // obtain or create redis cli client
+  if (recreate || !redisCli) {
+    redisCli = redis.createClient(options);
+    redisCli.uuid = redisCli.uuid || uuidv1();
+    redisCli.prefix = redisCli.prefix || prefix;
+    cli = cli || redisCli;
+  }
+
+  // return redis cli client
+  return redisCli;
 };
 
 /**
@@ -374,6 +416,7 @@ export const createClients = (optns) => {
   // create and return clients
   return {
     client: createClient(optns), // normal client
+    cli: createCli(optns), // cli client
     locker: createLocker(optns), // lock client
     warlocker: createWarlock(optns), // warlock instance
     ...createPubSub(optns), // pubsub clients
@@ -612,7 +655,7 @@ export const clear = (pattern, done) => {
  */
 export const info = (done) => {
   // ensure client
-  const redisClient = createClient();
+  const redisClient = createCli();
 
   // fetch keys
   return redisClient.info((error /* ,info */) => {
@@ -685,7 +728,7 @@ export const count = (...patterns) => {
 export const quit = () => {
   // quit all clients
   // TODO client.end if callback passed
-  const clients = [publisher, subscriber, locker, client];
+  const clients = [publisher, subscriber, locker, cli, client];
   forEach(clients, (redisClient) => {
     // clear subscriptions and listeners
     redisClient.unsubscribe();
@@ -696,13 +739,14 @@ export const quit = () => {
 
   // reset clients
   client = null;
+  cli = null;
   warlocker = null;
   locker = null;
   publisher = null;
   subscriber = null;
 
   // return redis client states
-  return { client, locker, warlocker, publisher, subscriber };
+  return { client, cli, locker, warlocker, publisher, subscriber };
 };
 
 /**

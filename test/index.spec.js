@@ -4,6 +4,7 @@ import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
   createClient,
+  createCli,
   createLocker,
   createWarlock,
   createPublisher,
@@ -57,6 +58,24 @@ describe('helpers', () => {
   it('should not re-create redis client', () => {
     const a = createClient();
     const b = createClient();
+    expect(a.uuid).to.be.equal(b.uuid);
+    expect(a.prefix).to.be.equal(b.prefix);
+  });
+
+  it('should create cli redis client', () => {
+    expect(createCli).to.exist.and.be.a('function');
+
+    const cli = createCli();
+
+    expect(cli).to.exist;
+    expect(cli.uuid).to.exist;
+    expect(cli.prefix).to.exist.and.be.equal('r');
+  });
+
+  it('should not re-create cli redis client', () => {
+    const a = createCli();
+    const b = createCli();
+
     expect(a.uuid).to.be.equal(b.uuid);
     expect(a.prefix).to.be.equal(b.prefix);
   });
@@ -174,6 +193,7 @@ describe('helpers', () => {
 
     const {
       client,
+      cli,
       locker,
       warlocker,
       publisher,
@@ -183,6 +203,10 @@ describe('helpers', () => {
     expect(client).to.exist;
     expect(client.uuid).to.exist;
     expect(client.prefix).to.exist.and.be.equal('r');
+
+    expect(cli).to.exist;
+    expect(cli.uuid).to.exist;
+    expect(cli.prefix).to.exist.and.be.equal('r');
 
     expect(locker).to.exist;
     expect(locker.uuid).to.exist;
@@ -261,6 +285,7 @@ describe('helpers', () => {
 
     const {
       client,
+      cli,
       locker,
       warlocker,
       publisher,
@@ -268,6 +293,7 @@ describe('helpers', () => {
     } = createClients();
 
     expect(client).to.exist;
+    expect(cli).to.exist;
     expect(locker).to.exist;
     expect(warlocker).to.exist;
     expect(publisher).to.exist;
@@ -275,6 +301,7 @@ describe('helpers', () => {
 
     const quited = quit();
     expect(quited.client).to.not.exist;
+    expect(quited.cli).to.not.exist;
     expect(quited.locker).to.not.exist;
     expect(quited.warlocker).to.not.exist;
     expect(quited.publisher).to.not.exist;
