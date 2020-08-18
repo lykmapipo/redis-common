@@ -41,7 +41,7 @@ let warlocker; // warlock instance
  * @param {String} [optns.prefix='r'] valid redis key prefix
  * @param {String} [optns.separator=':'] valid redis key separator
  * @param {String} [optns.eventPrefix='events'] valid redis events key prefix
- * @param {Number} [optns.lockTTL=1000] valid redis ttl in milliseconds
+ * @param {Number} [optns.lockTtl=1000] valid redis ttl in milliseconds
  * @return {Object} merged options
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
@@ -65,7 +65,7 @@ export const withDefaults = (optns) => {
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
     eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),
     lockPrefix: getString('REDIS_LOCK_PREFIX', 'locks'),
-    lockTTL: getNumber('REDIS_LOCK_TTL', 1000),
+    lockTtl: getNumber('REDIS_LOCK_TTL', 1000),
   };
 
   // merge and compact with defaults
@@ -73,6 +73,72 @@ export const withDefaults = (optns) => {
 
   // return
   return options;
+};
+
+/**
+ * @function createRedisClient
+ * @name createRedisClient
+ * @description Create redis client
+ * @param {Object} optns valid options
+ * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {Boolean} [optns.recreate=false] whether to create new client
+ * @param {String} [optns.prefix='r'] client key prefix
+ * @return {Object} redis client
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.6.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * const client = createRedisClient();
+ *
+ */
+export const createRedisClient = (optns) => {
+  // obtain options
+  const options = withDefaults(optns);
+
+  // create new redis client
+  const redisClient = redis.createClient(options);
+  redisClient.uuid = options.uuid || uuidv1();
+  redisClient.prefix = options.prefix;
+
+  // return redis client
+  return redisClient;
+};
+
+/**
+ * @function quitRedisClient
+ * @name quitRedisClient
+ * @description Quit given redis client
+ * @param {Object} redisClient Valid redis client instance
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.6.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * quitRedisClient(client);
+ *
+ */
+export const quitRedisClient = (redisClient) => {
+  // TODO client.end if callback passed
+
+  // quit given client
+  if (redisClient) {
+    // clear subscriptions and listeners
+    redisClient.unsubscribe();
+    redisClient.removeAllListeners();
+
+    // quit client
+    redisClient.quit();
+  }
+
+  // return quited client
+  return redisClient;
 };
 
 /**
@@ -134,16 +200,14 @@ export const keyFor = (...args) => {
  */
 export const createClient = (optns) => {
   // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
+  const { recreate, ...options } = withDefaults(optns);
 
   // ref client
   let redisClient = client;
 
   // obtain or create redis client
   if (recreate || !redisClient) {
-    redisClient = redis.createClient(options);
-    redisClient.uuid = redisClient.uuid || uuidv1();
-    redisClient.prefix = redisClient.prefix || prefix;
+    redisClient = createRedisClient(options);
     client = client || redisClient;
   }
 
@@ -175,21 +239,19 @@ export const createClient = (optns) => {
  */
 export const createCli = (optns) => {
   // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
+  const { recreate, ...options } = withDefaults(optns);
 
   // ref cli client
-  let redisCli = cli;
+  let redisClient = cli;
 
   // obtain or create redis cli client
-  if (recreate || !redisCli) {
-    redisCli = redis.createClient(options);
-    redisCli.uuid = redisCli.uuid || uuidv1();
-    redisCli.prefix = redisCli.prefix || prefix;
-    cli = cli || redisCli;
+  if (recreate || !redisClient) {
+    redisClient = createRedisClient(options);
+    cli = cli || redisClient;
   }
 
   // return redis cli client
-  return redisCli;
+  return redisClient;
 };
 
 /**
@@ -216,21 +278,19 @@ export const createCli = (optns) => {
  */
 export const createLocker = (optns) => {
   // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
+  const { recreate, ...options } = withDefaults(optns);
 
   // ref locker
-  let redisLocker = locker;
+  let redisClient = locker;
 
   // obtain or create redis lock client
-  if (recreate || !redisLocker) {
-    redisLocker = redis.createClient(options);
-    redisLocker.uuid = redisLocker.uuid || uuidv1();
-    redisLocker.prefix = redisLocker.prefix || prefix;
-    locker = locker || redisLocker;
+  if (recreate || !redisClient) {
+    redisClient = createRedisClient(options);
+    locker = locker || redisClient;
   }
 
   // return locker client
-  return redisLocker;
+  return redisClient;
 };
 
 /**
@@ -303,21 +363,19 @@ export const createWarlock = (optns) => {
  */
 export const createPublisher = (optns) => {
   // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
+  const { recreate, ...options } = withDefaults(optns);
 
   // ref publisher
-  let redisPublisher = publisher;
+  let redisClient = publisher;
 
   // obtain or create redis publisher client
-  if (recreate || !redisPublisher) {
-    redisPublisher = redis.createClient(options);
-    redisPublisher.uuid = redisPublisher.uuid || uuidv1();
-    redisPublisher.prefix = redisPublisher.prefix || prefix;
-    publisher = publisher || redisPublisher;
+  if (recreate || !redisClient) {
+    redisClient = createRedisClient(options);
+    publisher = publisher || redisClient;
   }
 
   // return pubisher client
-  return redisPublisher;
+  return redisClient;
 };
 
 /**
@@ -344,21 +402,19 @@ export const createPublisher = (optns) => {
  */
 export const createSubscriber = (optns) => {
   // obtain options
-  const { prefix, recreate, ...options } = withDefaults(optns);
+  const { recreate, ...options } = withDefaults(optns);
 
   // ref subscriber
-  let redisSubscriber = subscriber;
+  let redisClient = subscriber;
 
   // obtain or create redis subscriber client
-  if (recreate || !redisSubscriber) {
-    redisSubscriber = redis.createClient(options);
-    redisSubscriber.uuid = redisSubscriber.uuid || uuidv1();
-    redisSubscriber.prefix = redisSubscriber.prefix || prefix;
-    subscriber = subscriber || redisSubscriber;
+  if (recreate || !redisClient) {
+    redisClient = createRedisClient(options);
+    subscriber = subscriber || redisClient;
   }
 
   // return subscriber client
-  return redisSubscriber;
+  return redisClient;
 };
 
 /**
@@ -763,16 +819,11 @@ export const clear = (pattern, done) => {
  *
  */
 export const quit = () => {
-  // quit all clients
   // TODO client.end if callback passed
+
+  // quit all clients
   const clients = [publisher, subscriber, locker, cli, client];
-  forEach(clients, (redisClient) => {
-    // clear subscriptions and listeners
-    redisClient.unsubscribe();
-    redisClient.removeAllListeners();
-    // quit client
-    redisClient.quit();
-  });
+  forEach(clients, (redisClient) => quitRedisClient(redisClient));
 
   // reset clients
   client = null;
@@ -997,11 +1048,11 @@ export const unsubscribe = (channel, done) => {
  */
 export const lock = (key, ttl, done) => {
   // obtain options
-  const { lockTTL } = withDefaults();
+  const { lockTtl } = withDefaults();
 
   // normalize arguments
   const actualKey = key; // TODO: support default
-  const actualTTL = isFunction(ttl) ? lockTTL : ttl;
+  const actualTTL = isFunction(ttl) ? lockTtl : ttl;
   const cb = isFunction(ttl) ? ttl : done || noop;
 
   // ensure warlock instance

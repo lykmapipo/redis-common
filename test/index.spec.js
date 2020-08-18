@@ -3,6 +3,8 @@ import { parallel } from 'async';
 import { expect, faker } from '@lykmapipo/test-helpers';
 import {
   withDefaults,
+  createRedisClient,
+  quitRedisClient,
   createClient,
   createCli,
   createLocker,
@@ -35,7 +37,27 @@ describe('helpers', () => {
     expect(options.separator).to.exist.and.be.equal(':');
     expect(options.eventPrefix).to.exist.and.be.equal('events');
     expect(options.lockPrefix).to.exist.and.be.equal('locks');
-    expect(options.lockTTL).to.exist.and.be.equal(1000);
+    expect(options.lockTtl).to.exist.and.be.equal(1000);
+  });
+
+  it('should create new redis client', () => {
+    expect(createRedisClient).to.exist.and.be.a('function');
+
+    const client = createRedisClient();
+    expect(client).to.exist;
+    expect(client.uuid).to.exist;
+    expect(client.prefix).to.exist.and.be.equal('r');
+  });
+
+  it('should quit given redis client', (done) => {
+    let redisClient = createRedisClient();
+
+    redisClient.on('ready', () => {
+      expect(redisClient.ready).to.be.true;
+      redisClient = quitRedisClient(redisClient);
+      expect(redisClient.ready).to.be.false;
+      done();
+    });
   });
 
   it('should create redis client', () => {
