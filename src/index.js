@@ -1,5 +1,7 @@
 import {
+  filter,
   forEach,
+  findLast,
   first,
   initial,
   isEmpty,
@@ -708,6 +710,41 @@ export const count = (...patterns) => {
   return redisClient.exec((error, counts) => {
     return done(error, counts.length > 1 ? counts : first(counts));
   });
+};
+
+/**
+ * @function info
+ * @name info
+ * @description Read or reconfigure redis server at run time
+ * @param {*} params Valid config params
+ * @param {Function} done callback to invoke on success or failure
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.6.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * config('SET', 'notify-keyspace-events', 'Ex');
+ * config('SET', 'notify-keyspace-events', 'Ex', (error, results) => { ... });
+ *
+ * config('GET', 'notify-keyspace-events');
+ * config('GET', 'notify-keyspace-events', (error, results) => { ... });
+ *
+ */
+export const config = (...params) => {
+  // ensure client
+  const redisClient = createCli();
+
+  // obtain callback
+  const cb = findLast([...params], (param) => isFunction(param)) || noop;
+
+  // obtain args
+  const args = filter([...params], (param) => !isFunction(param));
+
+  // fetch keys
+  return redisClient.config(...[...args, cb]);
 };
 
 /**

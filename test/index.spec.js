@@ -19,6 +19,7 @@ import {
   clear,
   info,
   count,
+  config,
   quit,
   lock,
 } from '../src';
@@ -496,6 +497,29 @@ describe('count', () => {
       expect(_.first(keyCounts)).to.be.equal(3);
       expect(_.last(keyCounts)).to.be.equal(0);
       done(error, keyCounts);
+    });
+  });
+
+  after((done) => clear(done));
+});
+
+describe('config', () => {
+  beforeEach((done) => clear(done));
+
+  it('should be able to set config', (done) => {
+    config('SET', 'notify-keyspace-events', 'xE', (error, results) => {
+      expect(error).to.not.exist;
+      expect(results).to.be.equal('OK');
+      done(error, results);
+    });
+  });
+
+  it('should be able to get config', (done) => {
+    config('GET', 'notify-keyspace-events', (error, [key, value]) => {
+      expect(error).to.not.exist;
+      expect(key).to.be.equal('notify-keyspace-events');
+      expect(value).to.be.equal('xE');
+      done(error, [key, value]);
     });
   });
 
