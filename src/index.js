@@ -38,6 +38,7 @@ let warlocker; // warlock instance
  * @description Merge provided options with defaults.
  * @param {Object} [optns] provided options
  * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {String} [optns.db=0] valid redis database number
  * @param {String} [optns.prefix='r'] valid redis key prefix
  * @param {String} [optns.separator=':'] valid redis key separator
  * @param {String} [optns.eventPrefix='events'] valid redis events key prefix

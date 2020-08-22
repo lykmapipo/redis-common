@@ -18,6 +18,7 @@ let warlocker; // warlock instance
  * @description Merge provided options with defaults.
  * @param {Object} [optns] provided options
  * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {String} [optns.db=0] valid redis database number
  * @param {String} [optns.prefix='r'] valid redis key prefix
  * @param {String} [optns.separator=':'] valid redis key separator
  * @param {String} [optns.eventPrefix='events'] valid redis events key prefix
@@ -26,7 +27,7 @@ let warlocker; // warlock instance
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
- * @version 0.1.0
+ * @version 0.2.0
  * @static
  * @public
  * @example
@@ -41,6 +42,7 @@ const withDefaults = (optns) => {
   // defaults
   const defaults = {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
+    db: getNumber('REDIS_DB', 0),
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
     eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),

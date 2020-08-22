@@ -11,6 +11,7 @@ Merge provided options with defaults.
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | provided options | *Optional* |
 | optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
+| optns.db&#x3D;0 | `String`  | valid redis database number | *Optional* |
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | valid redis key prefix | *Optional* |
 | optns.separator&#x3D;&#x27;:&#x27; | `String`  | valid redis key separator | *Optional* |
 | optns.eventPrefix&#x3D;&#x27;events&#x27; | `String`  | valid redis events key prefix | *Optional* |
