@@ -179,6 +179,74 @@ export const keyFor = (...args) => {
 };
 
 /**
+ * @function eventKey
+ * @name eventKey
+ * @description Generate event key
+ * @param {...String|String} args valid key parts
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.8.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * eventKeyFor('users:pay');
+ * // => 'r:events:users:pay';
+ *
+ * eventKeyFor('users', 'pay');
+ * // => 'r:events:users:pay'
+ *
+ */
+export const eventKeyFor = (...args) => {
+  // obtain options
+  const { eventPrefix } = withDefaults();
+
+  // collect key parts
+  const parts = compact([eventPrefix].concat(...args));
+
+  // derive event key
+  const eventKey = keyFor(...parts);
+
+  // return lock key
+  return eventKey;
+};
+
+/**
+ * @function lockKeyFor
+ * @name lockKeyFor
+ * @description Generate lock key
+ * @param {...String|String} args valid key parts
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.8.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * lockKeyFor('users:pay');
+ * // => 'r:locks:users:pay';
+ *
+ * lockKeyFor('users', 'pay');
+ * // => 'r:locks:users:pay'
+ *
+ */
+export const lockKeyFor = (...args) => {
+  // obtain options
+  const { lockPrefix } = withDefaults();
+
+  // collect key parts
+  const parts = compact([lockPrefix].concat(...args));
+
+  // derive lock key
+  const lockKey = keyFor(...parts);
+
+  // return lock key
+  return lockKey;
+};
+
+/**
  * @function createClient
  * @name createClient
  * @description Create redis client or return existing one

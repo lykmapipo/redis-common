@@ -15,6 +15,8 @@ import {
   createClients,
   createMulti,
   keyFor,
+  eventKeyFor,
+  lockKeyFor,
   set,
   get,
   keys,
@@ -266,6 +268,24 @@ describe('helpers', () => {
     expect(keyFor(['users', 'ab'])).to.be.equal('r:users:ab');
     expect(keyFor('users', 'likes', 'vegetables')).to.be.equal(
       'r:users:likes:vegetables'
+    );
+  });
+
+  it('should create redis event key', () => {
+    expect(eventKeyFor()).to.exist;
+    expect(eventKeyFor('ab')).to.be.equal('r:events:ab');
+    expect(eventKeyFor(['users', 'ab'])).to.be.equal('r:events:users:ab');
+    expect(eventKeyFor('users', 'likes', 'vegetables')).to.be.equal(
+      'r:events:users:likes:vegetables'
+    );
+  });
+
+  it('should create redis lock key', () => {
+    expect(lockKeyFor()).to.exist;
+    expect(lockKeyFor('ab')).to.be.equal('r:locks:ab');
+    expect(lockKeyFor(['users', 'ab'])).to.be.equal('r:locks:users:ab');
+    expect(lockKeyFor('users', 'likes', 'vegetables')).to.be.equal(
+      'r:locks:users:likes:vegetables'
     );
   });
 
