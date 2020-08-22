@@ -1,3 +1,22 @@
+#### 0.8.0 (2020-08-22)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([1f0c867b](https://github.com/lykmapipo/redis-common/commit/1f0c867bbec354e292d6c03131f8f19166370fc9))
+
+##### New Features
+
+*  derive lock & event key ([b7e28e45](https://github.com/lykmapipo/redis-common/commit/b7e28e45af9c5a5cfe19c2dfd5067d02dd933d6b))
+
+##### Bug Fixes
+
+* **create-client:**  prevent multi prefixes on keys ([00112aab](https://github.com/lykmapipo/redis-common/commit/00112aab4e4fe0a0f58b1784edd9a72b15a3a793))
+
+##### Refactors
+
+*  use lock & event key shortcuts ([140b4801](https://github.com/lykmapipo/redis-common/commit/140b4801c342afc4114dbeb012221fdcec7c116a))
+* **warlock:**  use custom makeLock ([86e7db4a](https://github.com/lykmapipo/redis-common/commit/86e7db4a7956c78b172b20a5e78b53bee59dd66d))
+
 #### 0.7.0 (2020-08-22)
 
 ##### Chores
