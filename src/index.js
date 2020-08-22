@@ -934,17 +934,13 @@ export const emit = (channel, message, done) => {
   let cb = isFunction(message) ? message : done;
 
   // obtain options
-  const { prefix, eventPrefix, separator } = withDefaults();
+  const { separator } = withDefaults();
 
   // ensure publisher redis client
   const redisPublisher = createPublisher();
 
   // ensure emit channel
-  emitChannel = compact([
-    prefix,
-    eventPrefix,
-    ...emitChannel.split(separator),
-  ]).join(separator);
+  emitChannel = eventKeyFor(...emitChannel.split(separator));
 
   // stringify channel message
   // TODO add source process, timestamp, uuid, ip, macaddres etc
@@ -1003,17 +999,13 @@ export const on = (channel, done) => {
   let cb = isFunction(channel) ? channel : done;
 
   // obtain options
-  const { prefix, eventPrefix, separator } = withDefaults();
+  const { separator } = withDefaults();
 
   // ensure subscriber redis client
   const redisSubscriber = createSubscriber();
 
   // ensure emit channel
-  emitChannel = compact([
-    prefix,
-    eventPrefix,
-    ...emitChannel.split(separator),
-  ]).join(separator);
+  emitChannel = eventKeyFor(...emitChannel.split(separator));
 
   // obtain callback if present
   cb = isFunction(cb) ? cb : noop;
@@ -1075,14 +1067,10 @@ export const unsubscribe = (channel, done) => {
   let cb = isFunction(channel) ? channel : done;
 
   // obtain options
-  const { prefix, eventPrefix, separator } = withDefaults();
+  const { separator } = withDefaults();
 
   // ensure emit channel
-  emitChannel = compact([
-    prefix,
-    eventPrefix,
-    ...emitChannel.split(separator),
-  ]).join(separator);
+  emitChannel = eventKeyFor(...emitChannel.split(separator));
 
   // obtain callback if present
   cb = isFunction(cb) ? cb : noop;
