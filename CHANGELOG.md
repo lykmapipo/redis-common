@@ -1,3 +1,13 @@
+#### 0.7.0 (2020-08-22)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([8fe45c07](https://github.com/lykmapipo/redis-common/commit/8fe45c07f7cd270961526c7237fba2ef100f64b7))
+
+##### New Features
+
+*  allow db number from env ([397b486b](https://github.com/lykmapipo/redis-common/commit/397b486bea620498ebcaf164ac86bcef762c9d26))
+
 #### 0.6.1 (2020-08-19)
 
 ##### Chores
