@@ -138,6 +138,76 @@ keyFor('users', 'likes');
 
 
 
+#### eventKeyFor(args) 
+
+Generate event key
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| args | `String` `String`  | valid key parts | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+eventKeyFor('users:pay');
+// => 'r:events:users:pay';
+
+eventKeyFor('users', 'pay');
+// => 'r:events:users:pay'
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### lockKeyFor(args) 
+
+Generate lock key
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| args | `String` `String`  | valid key parts | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+lockKeyFor('users:pay');
+// => 'r:locks:users:pay';
+
+lockKeyFor('users', 'pay');
+// => 'r:locks:users:pay'
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
 #### createClient(optns) 
 
 Create redis client or return existing one

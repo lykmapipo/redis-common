@@ -79,12 +79,13 @@ const withDefaults = (optns) => {
  */
 const createRedisClient = (optns) => {
   // obtain options
-  const options = withDefaults(optns);
+  const { uuid, prefix, ...options } = withDefaults(optns);
 
   // create new redis client
+  // FIX: exclude prefix on creating client to avoid multiple key prefixes
   const redisClient = redis.createClient(options);
-  redisClient.uuid = options.uuid || uuidv1();
-  redisClient.prefix = options.prefix;
+  redisClient.uuid = uuid || uuidv1();
+  redisClient.prefix = prefix;
 
   // return redis client
   return redisClient;
@@ -156,6 +157,74 @@ const keyFor = (...args) => {
 
   // return storage key
   return storageKey;
+};
+
+/**
+ * @function eventKey
+ * @name eventKey
+ * @description Generate event key
+ * @param {...String|String} args valid key parts
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.8.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * eventKeyFor('users:pay');
+ * // => 'r:events:users:pay';
+ *
+ * eventKeyFor('users', 'pay');
+ * // => 'r:events:users:pay'
+ *
+ */
+const eventKeyFor = (...args) => {
+  // obtain options
+  const { eventPrefix } = withDefaults();
+
+  // collect key parts
+  const parts = compact([eventPrefix].concat(...args));
+
+  // derive event key
+  const eventKey = keyFor(...parts);
+
+  // return lock key
+  return eventKey;
+};
+
+/**
+ * @function lockKeyFor
+ * @name lockKeyFor
+ * @description Generate lock key
+ * @param {...String|String} args valid key parts
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.8.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * lockKeyFor('users:pay');
+ * // => 'r:locks:users:pay';
+ *
+ * lockKeyFor('users', 'pay');
+ * // => 'r:locks:users:pay'
+ *
+ */
+const lockKeyFor = (...args) => {
+  // obtain options
+  const { lockPrefix } = withDefaults();
+
+  // collect key parts
+  const parts = compact([lockPrefix].concat(...args));
+
+  // derive lock key
+  const lockKey = keyFor(...parts);
+
+  // return lock key
+  return lockKey;
 };
 
 /**
@@ -299,7 +368,7 @@ const createLocker = (optns) => {
  */
 const createWarlock = (optns) => {
   // obtain options
-  const { recreate, lockPrefix } = withDefaults(optns);
+  const { recreate } = withDefaults(optns);
 
   // ref warlocker
   let redisWarlocker = warlocker;
@@ -312,7 +381,7 @@ const createWarlock = (optns) => {
     redisWarlocker.prefix = redisLocker.prefix;
 
     // override: internal warlock key generator
-    redisWarlocker.makeKey = (key) => keyFor(lockPrefix, key, 'lock');
+    redisWarlocker.makeKey = (...key) => lockKeyFor(...key);
 
     warlocker = warlocker || redisWarlocker;
   }
@@ -846,17 +915,13 @@ const emit = (channel, message, done) => {
   let cb = isFunction(message) ? message : done;
 
   // obtain options
-  const { prefix, eventPrefix, separator } = withDefaults();
+  const { separator } = withDefaults();
 
   // ensure publisher redis client
   const redisPublisher = createPublisher();
 
   // ensure emit channel
-  emitChannel = compact([
-    prefix,
-    eventPrefix,
-    ...emitChannel.split(separator),
-  ]).join(separator);
+  emitChannel = eventKeyFor(...emitChannel.split(separator));
 
   // stringify channel message
   // TODO add source process, timestamp, uuid, ip, macaddres etc
@@ -915,17 +980,13 @@ const on = (channel, done) => {
   let cb = isFunction(channel) ? channel : done;
 
   // obtain options
-  const { prefix, eventPrefix, separator } = withDefaults();
+  const { separator } = withDefaults();
 
   // ensure subscriber redis client
   const redisSubscriber = createSubscriber();
 
   // ensure emit channel
-  emitChannel = compact([
-    prefix,
-    eventPrefix,
-    ...emitChannel.split(separator),
-  ]).join(separator);
+  emitChannel = eventKeyFor(...emitChannel.split(separator));
 
   // obtain callback if present
   cb = isFunction(cb) ? cb : noop;
@@ -987,14 +1048,10 @@ const unsubscribe = (channel, done) => {
   let cb = isFunction(channel) ? channel : done;
 
   // obtain options
-  const { prefix, eventPrefix, separator } = withDefaults();
+  const { separator } = withDefaults();
 
   // ensure emit channel
-  emitChannel = compact([
-    prefix,
-    eventPrefix,
-    ...emitChannel.split(separator),
-  ]).join(separator);
+  emitChannel = eventKeyFor(...emitChannel.split(separator));
 
   // obtain callback if present
   cb = isFunction(cb) ? cb : noop;
@@ -1060,4 +1117,4 @@ const lock = (key, ttl, done) => {
   return redisWarlocker.lock(actualKey, actualTTL, actualCallback);
 };
 
-export { clear, config, count, createCli, createClient, createClients, createLocker, createMulti, createPubSub, createPublisher, createRedisClient, createSubscriber, createWarlock, emit, get, info, keyFor, keys, lock, on, publish, quit, quitRedisClient, set, subscribe, unsubscribe, withDefaults };
+export { clear, config, count, createCli, createClient, createClients, createLocker, createMulti, createPubSub, createPublisher, createRedisClient, createSubscriber, createWarlock, emit, eventKeyFor, get, info, keyFor, keys, lock, lockKeyFor, on, publish, quit, quitRedisClient, set, subscribe, unsubscribe, withDefaults };
