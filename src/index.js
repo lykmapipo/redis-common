@@ -99,12 +99,13 @@ export const withDefaults = (optns) => {
  */
 export const createRedisClient = (optns) => {
   // obtain options
-  const options = withDefaults(optns);
+  const { uuid, prefix, ...options } = withDefaults(optns);
 
   // create new redis client
+  // FIX: exclude prefix on creating client to avoid multiple key prefixes
   const redisClient = redis.createClient(options);
-  redisClient.uuid = options.uuid || uuidv1();
-  redisClient.prefix = options.prefix;
+  redisClient.uuid = uuid || uuidv1();
+  redisClient.prefix = prefix;
 
   // return redis client
   return redisClient;
