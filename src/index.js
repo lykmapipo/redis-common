@@ -46,7 +46,7 @@ let warlocker; // warlock instance
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
- * @version 0.1.0
+ * @version 0.2.0
  * @static
  * @public
  * @example
@@ -61,6 +61,7 @@ export const withDefaults = (optns) => {
   // defaults
   const defaults = {
     url: getString('REDIS_URL', 'redis://127.0.0.1:6379'),
+    db: getNumber('REDIS_DB', 0),
     prefix: getString('REDIS_KEY_PREFIX', 'r'),
     separator: getString('REDIS_KEY_SEPARATOR', ':'),
     eventPrefix: getString('REDIS_EVENT_PREFIX', 'events'),

@@ -33,6 +33,7 @@ describe('helpers', () => {
     const options = withDefaults();
     expect(options).to.exist.and.be.an('object');
     expect(options.url).to.exist.and.be.equal('redis://127.0.0.1:6379');
+    expect(options.db).to.exist.and.be.equal(0);
     expect(options.prefix).to.exist.and.be.equal('r');
     expect(options.separator).to.exist.and.be.equal(':');
     expect(options.eventPrefix).to.exist.and.be.equal('events');
