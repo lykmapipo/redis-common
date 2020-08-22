@@ -197,12 +197,12 @@ describe('helpers', () => {
     expect(warlocker.prefix).to.exist.and.be.equal('r');
 
     expect(warlocker.makeKey).to.be.a('function');
-    expect(warlocker.makeKey('expiry')).to.be.equal('r:locks:expiry:lock');
+    expect(warlocker.makeKey('expiry')).to.be.equal('r:locks:expiry');
     expect(warlocker.makeKey('schedule:123')).to.be.equal(
-      'r:locks:schedule:123:lock'
+      'r:locks:schedule:123'
     );
     expect(warlocker.makeKey('scheduler:expiry')).to.be.equal(
-      'r:locks:scheduler:expiry:lock'
+      'r:locks:scheduler:expiry'
     );
   });
 

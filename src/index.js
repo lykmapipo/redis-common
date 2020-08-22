@@ -387,7 +387,7 @@ export const createLocker = (optns) => {
  */
 export const createWarlock = (optns) => {
   // obtain options
-  const { recreate, lockPrefix } = withDefaults(optns);
+  const { recreate } = withDefaults(optns);
 
   // ref warlocker
   let redisWarlocker = warlocker;
@@ -400,7 +400,7 @@ export const createWarlock = (optns) => {
     redisWarlocker.prefix = redisLocker.prefix;
 
     // override: internal warlock key generator
-    redisWarlocker.makeKey = (key) => keyFor(lockPrefix, key, 'lock');
+    redisWarlocker.makeKey = (...key) => lockKeyFor(...key);
 
     warlocker = warlocker || redisWarlocker;
   }
