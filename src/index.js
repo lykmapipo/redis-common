@@ -32,6 +32,9 @@ let subscriber; // subscriber client
 let locker; // lock client
 let warlocker; // warlock instance
 
+// TODO: export const events = new EventEmitter();
+// TODO: register and emit all clients events via above emitter
+
 /**
  * @function withDefaults
  * @name withDefaults
@@ -814,6 +817,11 @@ export const count = (...patterns) => {
  *
  */
 export const config = (...params) => {
+  // TODO: support options
+  // TODO: setConfig
+  // TODO: getConfig
+  // TODO: clearConfig
+
   // ensure client
   const redisClient = createCli();
 
@@ -890,6 +898,7 @@ export const clear = (pattern, done) => {
  *
  */
 export const quit = () => {
+  // TODO: accept callback i.e quit(done);
   // TODO client.end if callback passed
 
   // quit all clients
@@ -1106,6 +1115,9 @@ export const unsubscribe = (channel, done) => {
  *
  */
 export const lock = (key, ttl, done) => {
+  // TODO: accept options
+  // TODO: rename to lockFor
+
   // obtain options
   const { lockTtl } = withDefaults();
 
