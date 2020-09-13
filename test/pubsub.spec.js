@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { expect } from '@lykmapipo/test-helpers';
+import { expect, faker } from '@lykmapipo/test-helpers';
 import { clear, emit, on, publish, subscribe, unsubscribe } from '../src';
 
 describe('publish & subscribe', () => {
@@ -33,7 +33,7 @@ describe('publish & subscribe', () => {
   });
 
   it('should subscribe for event on given channel', (done) => {
-    const payload = {};
+    const payload = { uuid: faker.random.uuid() };
     subscribe('clicks', (channel, message) => {
       expect(channel).to.exist;
       expect(message).to.exist.and.be.eql(payload);
@@ -43,7 +43,7 @@ describe('publish & subscribe', () => {
   });
 
   it('should listen event on given channel', (done) => {
-    const payload = {};
+    const payload = { uuid: faker.random.uuid() };
     on('logs', (channel, message) => {
       expect(channel).to.exist;
       expect(message).to.exist.and.be.eql(payload);
