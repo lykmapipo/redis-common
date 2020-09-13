@@ -51,7 +51,6 @@ Create redis client
 | ---- | ---- | ----------- | -------- |
 | optns | `Object`  | valid options | &nbsp; |
 | optns.url&#x3D;&#x27;redis://127.0.0.1:6379&#x27; | `String`  | valid redis url | *Optional* |
-| optns.recreate&#x3D;false | `Boolean`  | whether to create new client | *Optional* |
 | optns.prefix&#x3D;&#x27;r&#x27; | `String`  | client key prefix | *Optional* |
 
 
@@ -716,6 +715,72 @@ config('SET', 'notify-keyspace-events', 'Ex', (error, results) => { ... });
 
 config('GET', 'notify-keyspace-events');
 config('GET', 'notify-keyspace-events', (error, results) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### setConfig(params, done) 
+
+Reconfigure redis server at run time
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| params |  | Valid config params | &nbsp; |
+| done | `Function`  | callback to invoke on success or failure | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+config('notify-keyspace-events', 'Ex');
+config('notify-keyspace-events', 'Ex', (error, results) => { ... });
+```
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### getConfig(params, done) 
+
+Read redis server at run time
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| params |  | Valid config params | &nbsp; |
+| done | `Function`  | callback to invoke on success or failure | &nbsp; |
+
+
+
+
+##### Examples
+
+```javascript
+
+config('notify-keyspace-events');
+config('notify-keyspace-events', (error, results) => { ... });
 ```
 
 

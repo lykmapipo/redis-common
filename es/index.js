@@ -12,6 +12,9 @@ let subscriber; // subscriber client
 let locker; // lock client
 let warlocker; // warlock instance
 
+// TODO: export const events = new EventEmitter();
+// TODO: register and emit all clients events via above emitter
+
 /**
  * @function withDefaults
  * @name withDefaults
@@ -63,7 +66,6 @@ const withDefaults = (optns) => {
  * @description Create redis client
  * @param {Object} optns valid options
  * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis client
  * @author lally elias <lallyelias87@gmail.com>
@@ -778,6 +780,7 @@ const count = (...patterns) => {
  * @description Read or reconfigure redis server at run time
  * @param {*} params Valid config params
  * @param {Function} done callback to invoke on success or failure
+ * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -794,6 +797,10 @@ const count = (...patterns) => {
  *
  */
 const config = (...params) => {
+  // TODO: support options
+  // TODO: clearConfig
+  // TODO: export config keys as constants
+
   // ensure client
   const redisClient = createCli();
 
@@ -805,6 +812,68 @@ const config = (...params) => {
 
   // fetch keys
   return redisClient.config(...[...args, cb]);
+};
+
+/**
+ * @function setConfig
+ * @name setConfig
+ * @description Reconfigure redis server at run time
+ * @param {*} params Valid config params
+ * @param {Function} done callback to invoke on success or failure
+ * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.9.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * config('notify-keyspace-events', 'Ex');
+ * config('notify-keyspace-events', 'Ex', (error, results) => { ... });
+ *
+ */
+const setConfig = (...params) => {
+  // ensure set command
+  const args = filter(
+    [...params],
+    (param) => param !== 'SET' || param !== 'set'
+  );
+  const rargs = ['SET', ...args];
+
+  // set config and return
+  return config(...rargs);
+};
+
+/**
+ * @function getConfig
+ * @name getConfig
+ * @description Read redis server at run time
+ * @param {*} params Valid config params
+ * @param {Function} done callback to invoke on success or failure
+ * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.9.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * config('notify-keyspace-events');
+ * config('notify-keyspace-events', (error, results) => { ... });
+ *
+ */
+const getConfig = (...params) => {
+  // ensure set command
+  const args = filter(
+    [...params],
+    (param) => param !== 'GET' || param !== 'get'
+  );
+  const rargs = ['GET', ...args];
+
+  // get config and return
+  return config(...rargs);
 };
 
 /**
@@ -870,6 +939,7 @@ const clear = (pattern, done) => {
  *
  */
 const quit = () => {
+  // TODO: accept callback i.e quit(done);
   // TODO client.end if callback passed
 
   // quit all clients
@@ -1086,6 +1156,9 @@ const unsubscribe = (channel, done) => {
  *
  */
 const lock = (key, ttl, done) => {
+  // TODO: accept options
+  // TODO: rename to lockFor
+
   // obtain options
   const { lockTtl } = withDefaults();
 
@@ -1117,4 +1190,4 @@ const lock = (key, ttl, done) => {
   return redisWarlocker.lock(actualKey, actualTTL, actualCallback);
 };
 
-export { clear, config, count, createCli, createClient, createClients, createLocker, createMulti, createPubSub, createPublisher, createRedisClient, createSubscriber, createWarlock, emit, eventKeyFor, get, info, keyFor, keys, lock, lockKeyFor, on, publish, quit, quitRedisClient, set, subscribe, unsubscribe, withDefaults };
+export { clear, config, count, createCli, createClient, createClients, createLocker, createMulti, createPubSub, createPublisher, createRedisClient, createSubscriber, createWarlock, emit, eventKeyFor, get, getConfig, info, keyFor, keys, lock, lockKeyFor, on, publish, quit, quitRedisClient, set, setConfig, subscribe, unsubscribe, withDefaults };

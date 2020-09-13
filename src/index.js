@@ -86,7 +86,6 @@ export const withDefaults = (optns) => {
  * @description Create redis client
  * @param {Object} optns valid options
  * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
  * @param {String} [optns.prefix='r'] client key prefix
  * @return {Object} redis client
  * @author lally elias <lallyelias87@gmail.com>

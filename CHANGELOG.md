@@ -1,3 +1,17 @@
+#### 0.9.0 (2020-09-13)
+
+##### Chores
+
+* **deps:**  force latest version ([320bd3d8](https://github.com/lykmapipo/redis-common/commit/320bd3d8779b2a6a6b5a00bd7825173e5ba84d07))
+
+##### New Features
+
+* **config:**  provide get and set shortcut ([365da51c](https://github.com/lykmapipo/redis-common/commit/365da51c3e59b1ca4c0e900c5ac504959aca0814))
+
+##### Tests
+
+* **pubsup:**  ensure payload ([a982e26c](https://github.com/lykmapipo/redis-common/commit/a982e26ce52bdacf5dfba63494daea2ddf02d215))
+
 #### 0.8.2 (2020-09-10)
 
 ##### Chores
