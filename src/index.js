@@ -801,6 +801,7 @@ export const count = (...patterns) => {
  * @description Read or reconfigure redis server at run time
  * @param {*} params Valid config params
  * @param {Function} done callback to invoke on success or failure
+ * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -818,9 +819,8 @@ export const count = (...patterns) => {
  */
 export const config = (...params) => {
   // TODO: support options
-  // TODO: setConfig
-  // TODO: getConfig
   // TODO: clearConfig
+  // TODO: export config keys as constants
 
   // ensure client
   const redisClient = createCli();
@@ -833,6 +833,68 @@ export const config = (...params) => {
 
   // fetch keys
   return redisClient.config(...[...args, cb]);
+};
+
+/**
+ * @function setConfig
+ * @name setConfig
+ * @description Reconfigure redis server at run time
+ * @param {*} params Valid config params
+ * @param {Function} done callback to invoke on success or failure
+ * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.9.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * config('notify-keyspace-events', 'Ex');
+ * config('notify-keyspace-events', 'Ex', (error, results) => { ... });
+ *
+ */
+export const setConfig = (...params) => {
+  // ensure set command
+  const args = filter(
+    [...params],
+    (param) => param !== 'SET' || param !== 'set'
+  );
+  const rargs = ['SET', ...args];
+
+  // set config and return
+  return config(...rargs);
+};
+
+/**
+ * @function getConfig
+ * @name getConfig
+ * @description Read redis server at run time
+ * @param {*} params Valid config params
+ * @param {Function} done callback to invoke on success or failure
+ * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @author lally elias <lallyelias87@gmail.com>
+ * @license MIT
+ * @since 0.9.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ *
+ * config('notify-keyspace-events');
+ * config('notify-keyspace-events', (error, results) => { ... });
+ *
+ */
+export const getConfig = (...params) => {
+  // ensure set command
+  const args = filter(
+    [...params],
+    (param) => param !== 'GET' || param !== 'get'
+  );
+  const rargs = ['GET', ...args];
+
+  // get config and return
+  return config(...rargs);
 };
 
 /**

@@ -24,6 +24,8 @@ import {
   info,
   count,
   config,
+  setConfig,
+  getConfig,
   quit,
   lock,
 } from '../src';
@@ -557,8 +559,25 @@ describe('config', () => {
     });
   });
 
+  it('should be able to set config with setConfig', (done) => {
+    setConfig('notify-keyspace-events', 'xE', (error, results) => {
+      expect(error).to.not.exist;
+      expect(results).to.be.equal('OK');
+      done(error, results);
+    });
+  });
+
   it('should be able to get config', (done) => {
     config('GET', 'notify-keyspace-events', (error, [key, value]) => {
+      expect(error).to.not.exist;
+      expect(key).to.be.equal('notify-keyspace-events');
+      expect(value).to.be.equal('xE');
+      done(error, [key, value]);
+    });
+  });
+
+  it('should be able to get config with getConfig', (done) => {
+    getConfig('notify-keyspace-events', (error, [key, value]) => {
       expect(error).to.not.exist;
       expect(key).to.be.equal('notify-keyspace-events');
       expect(value).to.be.equal('xE');
