@@ -219,14 +219,8 @@ describe('helpers', () => {
   it('should create redis clients', () => {
     expect(createClients).to.exist.and.be.a('function');
 
-    const {
-      client,
-      cli,
-      locker,
-      warlocker,
-      publisher,
-      subscriber,
-    } = createClients();
+    const { client, cli, locker, warlocker, publisher, subscriber } =
+      createClients();
 
     expect(client).to.exist;
     expect(client.uuid).to.exist;
@@ -329,14 +323,8 @@ describe('helpers', () => {
   it('should quit all redis clients', () => {
     expect(quit).to.exist.and.be.a('function');
 
-    const {
-      client,
-      cli,
-      locker,
-      warlocker,
-      publisher,
-      subscriber,
-    } = createClients();
+    const { client, cli, locker, warlocker, publisher, subscriber } =
+      createClients();
 
     expect(client).to.exist;
     expect(cli).to.exist;
