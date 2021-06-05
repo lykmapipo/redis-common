@@ -116,6 +116,7 @@ export const createRedisClient = (optns) => {
  * @name quitRedisClient
  * @description Quit given redis client
  * @param {object} redisClient Valid redis client instance
+ * @returns {object} redis client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -148,6 +149,7 @@ export const quitRedisClient = (redisClient) => {
  * @name keyFor
  * @description Generate data storage key
  * @param {...string | string} args valid key parts
+ * @returns {string} redis data storage key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -182,6 +184,7 @@ export const keyFor = (...args) => {
  * @name eventKey
  * @description Generate event key
  * @param {...string | string} args valid key parts
+ * @returns {string} redis event key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.8.0
@@ -215,6 +218,7 @@ export const eventKeyFor = (...args) => {
  * @name lockKeyFor
  * @description Generate lock key
  * @param {...string | string} args valid key parts
+ * @returns {string} redis lock key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.8.0
@@ -573,11 +577,12 @@ export const createMulti = () => {
  * @description Set key to hold the value. If key already holds a value,
  * it is overwritten, regardless of its type.
  * @param {string} key key
- * @param {Mixed} value value
+ * @param {*} value value
  * @param {string} [expiry] expiry strategy(i.e PX or EX)
  * @param {number} [time] expiry time(i.e seconds or milliseconds)
  * @param {string} [strategy] save strategy(i.e NX or XX)
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} seted value and its key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -633,6 +638,7 @@ export const set = (key, value, expiry, time, strategy, done) => {
  * null is returned.
  * @param {string} key key
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} fetched value
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -672,6 +678,7 @@ export const get = (key, done) => {
  * @description Find all keys matching given pattern
  * @param {string} pattern valid key pattern
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} keys match given pattern
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -708,6 +715,7 @@ export const keys = (pattern, done) => {
  * @name info
  * @description Collect information and statistics about the server
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} redis information
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -731,10 +739,9 @@ export const info = (done) => {
 /**
  * @function count
  * @name count
- * @param {...any} patterns
  * @description Count the number of keys that match specified pattern
- * @param {...string | string} args valid key patterns
- * @param {Function} done callback to invoke on success or failure
+ * @param {...string | string} patterns valid key patterns
+ * @returns {number} keys count matched specified pattern
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -780,8 +787,8 @@ export const count = (...patterns) => {
  * @name config
  * @description Read or reconfigure redis server at run time
  * @param {*} params Valid config params
- * @param {Function} done callback to invoke on success or failure
  * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @returns {*} redis config response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -819,8 +826,8 @@ export const config = (...params) => {
  * @name setConfig
  * @description Reconfigure redis server at run time
  * @param {*} params Valid config params
- * @param {Function} done callback to invoke on success or failure
  * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @returns {*} redis set config response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.9.0
@@ -849,8 +856,8 @@ export const setConfig = (...params) => {
  * @name getConfig
  * @description Read redis server at run time
  * @param {*} params Valid config params
- * @param {Function} done callback to invoke on success or failure
  * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @returns {*} redis get config response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.9.0
@@ -878,8 +885,9 @@ export const getConfig = (...params) => {
  * @function clear
  * @name clear
  * @description Clear all data saved and their key
- * @param pattern
+ * @param {string} [pattern] valid key patterns
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} redis multi-del response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -904,7 +912,7 @@ export const clear = (pattern, done) => {
   // redisClient.eval(script, 0);
 
   // obtain keys
-  keys(keyPattern, (error, foundKeys) => {
+  return keys(keyPattern, (error, foundKeys) => {
     // back-off in case there is error
     if (error) {
       return cb(error);
@@ -926,6 +934,7 @@ export const clear = (pattern, done) => {
  * @name quit
  * @description Quit and restore redis clients states
  * @author lally elias <lallyelias87@gmail.com>
+ * @returns {*} cleared redis clients
  * @license MIT
  * @since 0.1.0
  * @version 0.1.0
@@ -960,8 +969,9 @@ export const quit = () => {
  * @name emit
  * @description Posts a message to the given channel
  * @param {string} channel valid channel name or patterns
- * @param {Mixed} message valid message to emit
+ * @param {*} message valid message to emit
  * @param {Function} [done] callback to invoke on success or failure
+ * @returns {*} redis publish response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.2.0
@@ -1007,8 +1017,9 @@ export const emit = (channel, message, done) => {
  * @name publish
  * @description Posts a message to the given channel
  * @param {string} channel valid channel name or patterns
- * @param {Mixed} message valid message to publish
+ * @param {*} message valid message to publish
  * @param {Function} [done] callback to invoke on success or failure
+ * @returns {*} redis publish response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -1028,6 +1039,7 @@ export const publish = emit;
  * the given patterns
  * @param {string} channel valid channel name or patterns
  * @param {Function} done callback to invoke on message
+ * @returns {*} channel and parsed message
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.2.0
@@ -1075,6 +1087,7 @@ export const on = (channel, done) => {
  * the given patterns
  * @param {string} channel valid channel name or patterns
  * @param {Function} done callback to invoke on message
+ * @returns {*} channel and parsed message
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -1094,6 +1107,7 @@ export const subscribe = on;
  * the given patterns
  * @param {string} channel valid channel name or patterns
  * @param {Function} done callback to invoke on message
+ * @returns {*} redis unsubscribe response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.2.0
@@ -1134,6 +1148,7 @@ export const unsubscribe = (channel, done) => {
  * @param {string} key name for the lock key
  * @param {number} ttl time in milliseconds for the lock to live
  * @param {Function} [done] callback to invoke on success or failure
+ * @returns {Function} unlock callback
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.5.0

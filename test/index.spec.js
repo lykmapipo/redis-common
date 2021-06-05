@@ -355,7 +355,7 @@ describe('set', () => {
   });
 
   it('should not set with not value', (done) => {
-    const key = faker.random.uuid();
+    const key = faker.datatype.uuid();
 
     set(key, (error, result) => {
       expect(error).to.not.exist;
@@ -365,7 +365,7 @@ describe('set', () => {
   });
 
   it('should set string', (done) => {
-    const key = faker.random.uuid();
+    const key = faker.datatype.uuid();
     const value = faker.random.word();
 
     set(key, value, (error, result) => {
@@ -377,8 +377,8 @@ describe('set', () => {
   });
 
   it('should set number', (done) => {
-    const key = faker.random.uuid();
-    const value = faker.random.number();
+    const key = faker.datatype.uuid();
+    const value = faker.datatype.number();
 
     set(key, value, (error, result) => {
       expect(error).to.not.exist;
@@ -389,7 +389,7 @@ describe('set', () => {
   });
 
   it('should set array', (done) => {
-    const key = faker.random.uuid();
+    const key = faker.datatype.uuid();
     const value = [faker.random.word(), faker.random.word()];
 
     set(key, value, (error, result) => {
@@ -401,7 +401,7 @@ describe('set', () => {
   });
 
   it('should set plain object', (done) => {
-    const key = faker.random.uuid();
+    const key = faker.datatype.uuid();
     const value = faker.helpers.createTransaction();
 
     set(key, value, (error, result) => {
@@ -413,7 +413,7 @@ describe('set', () => {
   });
 
   it('should set expiry', (done) => {
-    const key = faker.random.uuid();
+    const key = faker.datatype.uuid();
     const value = faker.random.word();
 
     set(key, value, 'EX', 1, (error, result) => {
@@ -425,7 +425,7 @@ describe('set', () => {
   });
 
   it('should set save strategy', (done) => {
-    const key = faker.random.uuid();
+    const key = faker.datatype.uuid();
     const value = faker.random.word();
 
     set(key, value, 'EX', 1, 'NX', (error, result) => {
@@ -442,16 +442,16 @@ describe('set', () => {
 describe('get', () => {
   before((done) => clear(done));
 
-  const keyString = faker.random.uuid();
+  const keyString = faker.datatype.uuid();
   const string = faker.random.word();
 
-  const keyNumber = faker.random.uuid();
-  const number = faker.random.number();
+  const keyNumber = faker.datatype.uuid();
+  const number = faker.datatype.number();
 
-  const keyArray = faker.random.uuid();
+  const keyArray = faker.datatype.uuid();
   const array = [faker.random.word(), faker.random.word()];
 
-  const keyObject = faker.random.uuid();
+  const keyObject = faker.datatype.uuid();
   const object = _.omit(faker.helpers.createTransaction(), 'date');
 
   before((done) => set(keyString, string, done));

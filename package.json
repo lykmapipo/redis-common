@@ -68,7 +68,7 @@
     "cz-conventional-changelog": "^3.3.0",
     "dot-prop": "^6.0.1",
     "doxdox": "^3.0.0",
-    "eslint": "^7.27.0",
+    "eslint": "^7.28.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
@@ -86,7 +86,7 @@
     "nyc": "^15.1.0",
     "prettier": "^2.3.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.50.5",
+    "rollup": "^2.50.6",
     "shelljs": "^0.8.4",
     "websocket-extensions": "^0.1.4"
   },

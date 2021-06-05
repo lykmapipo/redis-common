@@ -33,7 +33,7 @@ describe('publish & subscribe', () => {
   });
 
   it('should subscribe for event on given channel', (done) => {
-    const payload = { uuid: faker.random.uuid() };
+    const payload = { uuid: faker.datatype.uuid() };
     subscribe('clicks', (channel, message) => {
       expect(channel).to.exist;
       expect(message).to.exist.and.be.eql(payload);
@@ -43,7 +43,7 @@ describe('publish & subscribe', () => {
   });
 
   it('should listen event on given channel', (done) => {
-    const payload = { uuid: faker.random.uuid() };
+    const payload = { uuid: faker.datatype.uuid() };
     on('logs', (channel, message) => {
       expect(channel).to.exist;
       expect(message).to.exist.and.be.eql(payload);

@@ -19,14 +19,14 @@ let warlocker; // warlock instance
  * @function withDefaults
  * @name withDefaults
  * @description Merge provided options with defaults.
- * @param {Object} [optns] provided options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {String} [optns.db=0] valid redis database number
- * @param {String} [optns.prefix='r'] valid redis key prefix
- * @param {String} [optns.separator=':'] valid redis key separator
- * @param {String} [optns.eventPrefix='events'] valid redis events key prefix
- * @param {Number} [optns.lockTtl=1000] valid redis ttl in milliseconds
- * @return {Object} merged options
+ * @param {object} [optns] provided options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {string} [optns.db=0] valid redis database number
+ * @param {string} [optns.prefix='r'] valid redis key prefix
+ * @param {string} [optns.separator=':'] valid redis key separator
+ * @param {string} [optns.eventPrefix='events'] valid redis events key prefix
+ * @param {number} [optns.lockTtl=1000] valid redis ttl in milliseconds
+ * @returns {object} merged options
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -39,7 +39,6 @@ let warlocker; // warlock instance
  * const options = withDefaults(optns);
  *
  * // => { url: ...}
- *
  */
 const withDefaults = (optns) => {
   // defaults
@@ -64,10 +63,10 @@ const withDefaults = (optns) => {
  * @function createRedisClient
  * @name createRedisClient
  * @description Create redis client
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis client
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -77,7 +76,6 @@ const withDefaults = (optns) => {
  * @example
  *
  * const client = createRedisClient();
- *
  */
 const createRedisClient = (optns) => {
   // obtain options
@@ -97,7 +95,8 @@ const createRedisClient = (optns) => {
  * @function quitRedisClient
  * @name quitRedisClient
  * @description Quit given redis client
- * @param {Object} redisClient Valid redis client instance
+ * @param {object} redisClient Valid redis client instance
+ * @returns {object} redis client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -107,7 +106,6 @@ const createRedisClient = (optns) => {
  * @example
  *
  * quitRedisClient(client);
- *
  */
 const quitRedisClient = (redisClient) => {
   // TODO client.end if callback passed
@@ -130,7 +128,8 @@ const quitRedisClient = (redisClient) => {
  * @function keyFor
  * @name keyFor
  * @description Generate data storage key
- * @param {...String|String} args valid key parts
+ * @param {...string | string} args valid key parts
+ * @returns {string} redis data storage key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -144,7 +143,6 @@ const quitRedisClient = (redisClient) => {
  *
  * keyFor('users', 'likes');
  * // => 'r:users:likes'
- *
  */
 const keyFor = (...args) => {
   // obtain options
@@ -165,7 +163,8 @@ const keyFor = (...args) => {
  * @function eventKey
  * @name eventKey
  * @description Generate event key
- * @param {...String|String} args valid key parts
+ * @param {...string | string} args valid key parts
+ * @returns {string} redis event key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.8.0
@@ -179,7 +178,6 @@ const keyFor = (...args) => {
  *
  * eventKeyFor('users', 'pay');
  * // => 'r:events:users:pay'
- *
  */
 const eventKeyFor = (...args) => {
   // obtain options
@@ -199,7 +197,8 @@ const eventKeyFor = (...args) => {
  * @function lockKeyFor
  * @name lockKeyFor
  * @description Generate lock key
- * @param {...String|String} args valid key parts
+ * @param {...string | string} args valid key parts
+ * @returns {string} redis lock key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.8.0
@@ -213,7 +212,6 @@ const eventKeyFor = (...args) => {
  *
  * lockKeyFor('users', 'pay');
  * // => 'r:locks:users:pay'
- *
  */
 const lockKeyFor = (...args) => {
   // obtain options
@@ -233,11 +231,11 @@ const lockKeyFor = (...args) => {
  * @function createClient
  * @name createClient
  * @description Create redis client or return existing one
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis client
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -249,7 +247,6 @@ const lockKeyFor = (...args) => {
  * const client = createClient();
  *
  * const client = createClient({ recreate: true });
- *
  */
 const createClient = (optns) => {
   // obtain options
@@ -272,11 +269,11 @@ const createClient = (optns) => {
  * @function createCli
  * @name createCli
  * @description Create redis cli client or return existing one
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis client
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -288,7 +285,6 @@ const createClient = (optns) => {
  * const cli = createCli();
  *
  * const cli = createCli({ recreate: true });
- *
  */
 const createCli = (optns) => {
   // obtain options
@@ -311,11 +307,11 @@ const createCli = (optns) => {
  * @function createLocker
  * @name createLocker
  * @description Create redis lock client
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis lock client
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis lock client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.5.0
@@ -327,7 +323,6 @@ const createCli = (optns) => {
  * const locker = createLocker();
  *
  * const locker = createLocker({ recreate: true });
- *
  */
 const createLocker = (optns) => {
   // obtain options
@@ -350,11 +345,11 @@ const createLocker = (optns) => {
  * @function createWarlock
  * @name createWarlock
  * @description Create redis warlock instance
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis warlock instance
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis warlock instance
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.5.0
@@ -366,7 +361,6 @@ const createLocker = (optns) => {
  * const warlocker = createWarlock();
  *
  * const warlocker = createWarlock({ recreate: true });
- *
  */
 const createWarlock = (optns) => {
   // obtain options
@@ -396,11 +390,11 @@ const createWarlock = (optns) => {
  * @function createPublisher
  * @name createPublisher
  * @description Create redis publisher client
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis publisher client
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis publisher client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -412,7 +406,6 @@ const createWarlock = (optns) => {
  * const publisher = createPublisher();
  *
  * const publisher = createPublisher({ recreate: true });
- *
  */
 const createPublisher = (optns) => {
   // obtain options
@@ -435,11 +428,11 @@ const createPublisher = (optns) => {
  * @function createSubscriber
  * @name createSubscriber
  * @description Create redis subscriber client
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis subscriber client
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis subscriber client
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -451,7 +444,6 @@ const createPublisher = (optns) => {
  * const subscriber = createSubscriber();
  *
  * const subscriber = createSubscriber({ recreate: true });
- *
  */
 const createSubscriber = (optns) => {
   // obtain options
@@ -474,11 +466,11 @@ const createSubscriber = (optns) => {
  * @function createPubSub
  * @name createPubSub
  * @description Create redis pubsub clients
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new clients
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis pubsub clients
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new clients
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis pubsub clients
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -490,7 +482,6 @@ const createSubscriber = (optns) => {
  * const { publisher, subscriber } = createPubSub();
  *
  * const { publisher, subscriber } = createPubSub({ recreate: true });
- *
  */
 const createPubSub = (optns) => {
   // ref clients
@@ -505,11 +496,11 @@ const createPubSub = (optns) => {
  * @function createClients
  * @name createClients
  * @description Create redis clients
- * @param {Object} optns valid options
- * @param {String} [optns.url='redis://127.0.0.1:6379'] valid redis url
- * @param {Boolean} [optns.recreate=false] whether to create new client
- * @param {String} [optns.prefix='r'] client key prefix
- * @return {Object} redis clients
+ * @param {object} optns valid options
+ * @param {string} [optns.url='redis://127.0.0.1:6379'] valid redis url
+ * @param {boolean} [optns.recreate=false] whether to create new client
+ * @param {string} [optns.prefix='r'] client key prefix
+ * @returns {object} redis clients
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -521,7 +512,6 @@ const createPubSub = (optns) => {
  * const { client, publisher, subscriber } = createClients();
  *
  * const { client, publisher, subscriber } = createClients({ new: true });
- *
  */
 const createClients = (optns) => {
   // create and return clients
@@ -538,7 +528,7 @@ const createClients = (optns) => {
  * @function createMulti
  * @name createMulti
  * @description Create redis multi command object
- * @return {Object} redis clients
+ * @returns {object} redis clients
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -549,7 +539,6 @@ const createClients = (optns) => {
  *
  * const multi = createMulti();
  * multi.set('abc:1', 1).set('abc:2', 2).set('abc:3', 3).exec(done);
- *
  */
 const createMulti = () => {
   // ensure client
@@ -567,12 +556,13 @@ const createMulti = () => {
  * @name set
  * @description Set key to hold the value. If key already holds a value,
  * it is overwritten, regardless of its type.
- * @param {String} key key
- * @param {Mixed} value value
- * @param {String} [expiry] expiry strategy(i.e PX or EX)
- * @param {Number} [time] expiry time(i.e seconds or milliseconds)
- * @param {String} [strategy] save strategy(i.e NX or XX)
+ * @param {string} key key
+ * @param {*} value value
+ * @param {string} [expiry] expiry strategy(i.e PX or EX)
+ * @param {number} [time] expiry time(i.e seconds or milliseconds)
+ * @param {string} [strategy] save strategy(i.e NX or XX)
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} seted value and its key
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -586,7 +576,6 @@ const createMulti = () => {
  * set('users:count', 1, 'PX', 2000);
  * set('users:count', 1, 'EX', 1, 'NX');
  * set('users:count', 1, (error, value, key) => { ... });
- *
  */
 const set = (key, value, expiry, time, strategy, done) => {
   // do nothing
@@ -627,8 +616,9 @@ const set = (key, value, expiry, time, strategy, done) => {
  * @name get
  * @description Get the value of key. If the key does not exist,
  * null is returned.
- * @param {String} key key
+ * @param {string} key key
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} fetched value
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -639,7 +629,6 @@ const set = (key, value, expiry, time, strategy, done) => {
  *
  * get('users:count');
  * get('users:count', (error, value) => { ... });
- *
  */
 const get = (key, done) => {
   // do nothing
@@ -667,8 +656,9 @@ const get = (key, done) => {
  * @function keys
  * @name keys
  * @description Find all keys matching given pattern
- * @param {String} pattern valid key pattern
+ * @param {string} pattern valid key pattern
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} keys match given pattern
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -678,7 +668,6 @@ const get = (key, done) => {
  * @example
  *
  * keys('users', (error, keys) => { ... });
- *
  */
 const keys = (pattern, done) => {
   // normalize arguments
@@ -706,6 +695,7 @@ const keys = (pattern, done) => {
  * @name info
  * @description Collect information and statistics about the server
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} redis information
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -715,7 +705,6 @@ const keys = (pattern, done) => {
  * @example
  *
  * info((error, info) => { ... });
- *
  */
 const info = (done) => {
   // ensure client
@@ -731,8 +720,8 @@ const info = (done) => {
  * @function count
  * @name count
  * @description Count the number of keys that match specified pattern
- * @param {...String|String} args valid key patterns
- * @param {Function} done callback to invoke on success or failure
+ * @param {...string | string} patterns valid key patterns
+ * @returns {number} keys count matched specified pattern
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -743,7 +732,6 @@ const info = (done) => {
  *
  * count('users', (error, counts) => { ... });
  * count('users:sessions*', 'users:visits*', (error, counts) => { ... });
- *
  */
 const count = (...patterns) => {
   // normalize patterns to array
@@ -779,8 +767,8 @@ const count = (...patterns) => {
  * @name config
  * @description Read or reconfigure redis server at run time
  * @param {*} params Valid config params
- * @param {Function} done callback to invoke on success or failure
  * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @returns {*} redis config response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.6.0
@@ -794,7 +782,6 @@ const count = (...patterns) => {
  *
  * config('GET', 'notify-keyspace-events');
  * config('GET', 'notify-keyspace-events', (error, results) => { ... });
- *
  */
 const config = (...params) => {
   // TODO: support options
@@ -819,8 +806,8 @@ const config = (...params) => {
  * @name setConfig
  * @description Reconfigure redis server at run time
  * @param {*} params Valid config params
- * @param {Function} done callback to invoke on success or failure
  * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @returns {*} redis set config response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.9.0
@@ -831,7 +818,6 @@ const config = (...params) => {
  *
  * config('notify-keyspace-events', 'Ex');
  * config('notify-keyspace-events', 'Ex', (error, results) => { ... });
- *
  */
 const setConfig = (...params) => {
   // ensure set command
@@ -850,8 +836,8 @@ const setConfig = (...params) => {
  * @name getConfig
  * @description Read redis server at run time
  * @param {*} params Valid config params
- * @param {Function} done callback to invoke on success or failure
  * @see {@link https://raw.githubusercontent.com/redis/redis/6.0/redis.conf|redis.conf}
+ * @returns {*} redis get config response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.9.0
@@ -862,7 +848,6 @@ const setConfig = (...params) => {
  *
  * config('notify-keyspace-events');
  * config('notify-keyspace-events', (error, results) => { ... });
- *
  */
 const getConfig = (...params) => {
   // ensure set command
@@ -880,7 +865,9 @@ const getConfig = (...params) => {
  * @function clear
  * @name clear
  * @description Clear all data saved and their key
+ * @param {string} [pattern] valid key patterns
  * @param {Function} done callback to invoke on success or failure
+ * @returns {*} redis multi-del response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.1.0
@@ -892,7 +879,6 @@ const getConfig = (...params) => {
  * clear(error => { ... });
  *
  * clear('users', error => { ... });
- *
  */
 const clear = (pattern, done) => {
   // normalize arguments
@@ -906,7 +892,7 @@ const clear = (pattern, done) => {
   // redisClient.eval(script, 0);
 
   // obtain keys
-  keys(keyPattern, (error, foundKeys) => {
+  return keys(keyPattern, (error, foundKeys) => {
     // back-off in case there is error
     if (error) {
       return cb(error);
@@ -928,6 +914,7 @@ const clear = (pattern, done) => {
  * @name quit
  * @description Quit and restore redis clients states
  * @author lally elias <lallyelias87@gmail.com>
+ * @returns {*} cleared redis clients
  * @license MIT
  * @since 0.1.0
  * @version 0.1.0
@@ -936,7 +923,6 @@ const clear = (pattern, done) => {
  * @example
  *
  * quit();
- *
  */
 const quit = () => {
   // TODO: accept callback i.e quit(done);
@@ -962,9 +948,10 @@ const quit = () => {
  * @function emit
  * @name emit
  * @description Posts a message to the given channel
- * @param {String} channel valid channel name or patterns
- * @param {Mixed} message valid message to emit
+ * @param {string} channel valid channel name or patterns
+ * @param {*} message valid message to emit
  * @param {Function} [done] callback to invoke on success or failure
+ * @returns {*} redis publish response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.2.0
@@ -974,7 +961,6 @@ const quit = () => {
  * @example
  *
  * emit('user:clicks', { time: Date.now() });
- *
  */
 const emit = (channel, message, done) => {
   // normalize arguments
@@ -1010,9 +996,10 @@ const emit = (channel, message, done) => {
  * @function publish
  * @name publish
  * @description Posts a message to the given channel
- * @param {String} channel valid channel name or patterns
- * @param {Mixed} message valid message to publish
+ * @param {string} channel valid channel name or patterns
+ * @param {*} message valid message to publish
  * @param {Function} [done] callback to invoke on success or failure
+ * @returns {*} redis publish response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -1022,7 +1009,6 @@ const emit = (channel, message, done) => {
  * @example
  *
  * publish('user:clicks', { time: Date.now() });
- *
  */
 const publish = emit;
 
@@ -1031,8 +1017,9 @@ const publish = emit;
  * @name on
  * @description Listen for messages published to channels matching
  * the given patterns
- * @param {String} channel valid channel name or patterns
+ * @param {string} channel valid channel name or patterns
  * @param {Function} done callback to invoke on message
+ * @returns {*} channel and parsed message
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.2.0
@@ -1042,7 +1029,6 @@ const publish = emit;
  * @example
  *
  * on('user:clicks', (channel, message) => { ... });
- *
  */
 const on = (channel, done) => {
   // normalize arguments
@@ -1079,8 +1065,9 @@ const on = (channel, done) => {
  * @name subscribe
  * @description Listen for messages published to channels matching
  * the given patterns
- * @param {String} channel valid channel name or patterns
+ * @param {string} channel valid channel name or patterns
  * @param {Function} done callback to invoke on message
+ * @returns {*} channel and parsed message
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.3.0
@@ -1090,7 +1077,6 @@ const on = (channel, done) => {
  * @example
  *
  * subscribe('user:clicks', (channel, message) => { ... });
- *
  */
 const subscribe = on;
 
@@ -1099,8 +1085,9 @@ const subscribe = on;
  * @name unsubscribe
  * @description Stop listen for messages published to channels matching
  * the given patterns
- * @param {String} channel valid channel name or patterns
+ * @param {string} channel valid channel name or patterns
  * @param {Function} done callback to invoke on message
+ * @returns {*} redis unsubscribe response
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.2.0
@@ -1110,7 +1097,6 @@ const subscribe = on;
  * @example
  *
  * unsubscribe('user:clicks', (channel, count) => { ... });
- *
  */
 const unsubscribe = (channel, done) => {
   // normalize arguments
@@ -1139,9 +1125,10 @@ const unsubscribe = (channel, done) => {
  * @function lock
  * @name lock
  * @description Set lock
- * @param {String} key name for the lock key
- * @param {Number} ttl time in milliseconds for the lock to live
+ * @param {string} key name for the lock key
+ * @param {number} ttl time in milliseconds for the lock to live
  * @param {Function} [done] callback to invoke on success or failure
+ * @returns {Function} unlock callback
  * @author lally elias <lallyelias87@gmail.com>
  * @license MIT
  * @since 0.5.0
@@ -1153,7 +1140,6 @@ const unsubscribe = (channel, done) => {
  * lock('paymments:pay', 1000, (error, unlock) => { ... });
  *
  * lock('scheduler:work', (error, unlock) => { ... });
- *
  */
 const lock = (key, ttl, done) => {
   // TODO: accept options
