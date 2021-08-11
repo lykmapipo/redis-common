@@ -1,6 +1,6 @@
 # redis-common
 
-[![Build Status](https://travis-ci.org/lykmapipo/redis-common.svg?branch=master)](https://travis-ci.org/lykmapipo/redis-common)
+[![Build Status](https://travis-ci.com/lykmapipo/redis-common.svg?branch=master)](https://travis-ci.com/lykmapipo/redis-common)
 [![Dependencies Status](https://david-dm.org/lykmapipo/redis-common.svg)](https://david-dm.org/lykmapipo/redis-common)
 [![Coverage Status](https://coveralls.io/repos/github/lykmapipo/redis-common/badge.svg?branch=master)](https://coveralls.io/github/lykmapipo/redis-common?branch=master)
 [![GitHub License](https://img.shields.io/github/license/lykmapipo/redis-common)](https://github.com/lykmapipo/redis-common/blob/develop/LICENSE)
