@@ -1,3 +1,13 @@
+#### 0.9.12 (2021-09-06)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([8743bfad](https://github.com/lykmapipo/redis-common/commit/8743bfad87a1e0de52bebf8a47d7c9c0e06b9b71))
+
+##### Documentation Changes
+
+* **readme:**  update build status to travis.com ([5925f779](https://github.com/lykmapipo/redis-common/commit/5925f779112b2510e39d0b78bcb32a9875a42045))
+
 #### 0.9.11 (2021-08-09)
 
 ##### Chores
